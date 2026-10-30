@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs><radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(420 340 -370 458 835 118)" gradientUnits="userSpaceOnUse"><stop stop-color="#223D31"/><stop offset="1" stop-color="#0B1016"/></radialGradient></defs>
+  <path fill="url(#glow)" d="M0 0h1200v630H0z"/><path stroke="#29373D" d="M0 94h1200M0 538h1200" opacity=".5"/>
+  <rect x="86" y="219" width="86" height="86" rx="23" fill="#17221D" stroke="#506D48" stroke-width="2"/>
+  <path d="M139 242a26 26 0 1 0 6 32" stroke="#B3F184" stroke-width="8" stroke-linecap="round"/><path d="M126 265h23m-11-11 11 11-11 11" stroke="#E4F4D9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="197" y="278" fill="#EFF5F0" font-family="Arial,sans-serif" font-size="53" font-weight="700" letter-spacing="8">CSELL</text>
+  <text x="90" y="390" fill="#EFF5F0" font-family="Arial,sans-serif" font-size="43" font-weight="700">CS2 alım satımını</text><text x="90" y="447" fill="#B3F184" font-family="Arial,sans-serif" font-size="43" font-weight="700">tek yerden takip et.</text>
+  <text x="92" y="493" fill="#91A39E" font-family="Arial,sans-serif" font-size="19">Trade kilidi · Komisyon · Gerçekleşen net kâr</text>
+  <rect x="900" y="220" width="185" height="185" rx="26" fill="#121D20" stroke="#3B5445"/><path d="M934 322l39-43 31 18 48-57" stroke="#B3F184" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="1052" cy="240" r="7" fill="#B3F184"/>
+  <text x="933" y="370" fill="#DBE9DA" font-family="Arial,sans-serif" font-size="17">NET KÂR</text><text x="933" y="345" fill="#B3F184" font-family="Arial,sans-serif" font-size="30" font-weight="700">+$24.80</text>
+</svg>

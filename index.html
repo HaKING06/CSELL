@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1016" />
+    <meta name="color-scheme" content="dark" />
+    <script>
+      (() => {
+        let saved = '';
+        try { saved = localStorage.getItem('csell-language') || ''; } catch {}
+        const language = saved === 'tr' || saved === 'en' ? saved : (navigator.languages || [navigator.language || 'en'])[0]?.toLowerCase().startsWith('tr') ? 'tr' : 'en';
+        window.CSELL_LANGUAGE = language;
+        document.documentElement.lang = language;
+      })();
+    </script>
+    <title>CSELL — CS2 alım satım takip paneli</title>
+    <meta name="description" content="CS2 skin, sticker, charm, kasa ve diğer item alışlarını; trade koruması, satış komisyonu ve net kârıyla tek yerde takip et." />
+    <meta name="keywords" content="CS2, Counter-Strike 2, skin, trade, satış takibi, kâr hesaplama, trade ban, sticker slab, charm" />
+    <meta name="author" content="CSELL" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <link rel="canonical" href="https://csell.haking.tr/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:site_name" content="CSELL" />
+    <meta property="og:title" content="CSELL — CS2 alım satım takip paneli" />
+    <meta property="og:description" content="Alışlarını, trade kilitlerini ve komisyon sonrası gerçek kârını takip et." />
+    <meta property="og:url" content="https://csell.haking.tr/" />
+    <meta property="og:image" content="https://csell.haking.tr/assets/csell-social.svg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="CSELL — CS2 alım satım takip paneli" />
+    <meta name="twitter:description" content="CS2 alışlarını, trade kilitlerini ve net kârını takip et." />
+    <link rel="icon" href="./favicon.svg?v=2" type="image/svg+xml" />
+    <link rel="shortcut icon" href="./favicon.svg?v=2" type="image/svg+xml" />
+    <link rel="icon" href="./assets/csell-mark.svg?v=2" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.steamstatic.com" crossorigin />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@type":"WebApplication","name":"CSELL","url":"https://csell.haking.tr/","description":"CS2 item alım satım ve net kâr takip paneli.","applicationCategory":"FinanceApplication","operatingSystem":"Any","inLanguage":"tr"}
+    </script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="Ana menü">
+        <a class="brand" href="#dashboard" aria-label="CSELL ana sayfa">
+          <img src="./assets/csell-mark.svg" alt="" width="38" height="38" />
+          <span class="brand-copy"><strong>CSELL</strong><small>TRADE JOURNAL</small></span>
+        </a>
+        <div class="workspace-label">ÇALIŞMA ALANI</div>
+        <nav class="main-nav">
+          <button class="nav-link active" data-page="dashboard"><span class="nav-icon">◫</span><span>Genel bakış</span></button>
+          <button class="nav-link" data-page="history"><span class="nav-icon">▤</span><span>Geçmiş kayıtlar</span><span class="nav-count" id="nav-trade-count">0</span></button>
+          <button class="nav-link" data-page="reports"><span class="nav-icon">▥</span><span>Raporlar</span></button>
+        </nav>
+        <div class="sidebar-divider"></div>
+        <div class="workspace-label">YÖNETİM</div>
+        <nav class="main-nav">
+          <button class="nav-link" data-page="settings"><span class="nav-icon">⚙</span><span>Ayarlar</span></button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="support-card">
+            <div class="support-top"><span class="support-gem">✳</span><span>Bağımsız geliştirildi</span></div>
+            <p>CSELL ücretsiz. Geliştirmeyi desteklemek istersen Steam'den katkıda bulunabilirsin.</p>
+            <a href="https://steamcommunity.com/tradeoffer/new/?partner=1800489426&amp;token=jIoKxNd7" target="_blank" rel="noopener noreferrer">Steam'den destek ol <span>↗</span></a>
+          </div>
+          <div class="sidebar-user"><div class="avatar">C</div><div><strong>Yerel profil</strong><small>Veriler bu cihazda saklanır</small></div><span class="online-dot"></span></div>
+        </div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <button class="icon-button mobile-menu" id="mobile-menu" aria-label="Menüyü aç">☰</button>
+          <div class="breadcrumbs"><span>Çalışma alanı</span><span class="crumb-slash">/</span><strong id="current-section">Genel bakış</strong></div>
+          <div class="topbar-actions">
+            <div class="catalog-state" id="catalog-state"><span class="status-dot"></span><span>Katalog hazır</span></div>
+            <button class="button button-primary button-small" id="quick-add"><span class="plus">＋</span> Yeni kayıt</button>
+          </div>
+        </header>
+
+        <div class="page-wrap">
+          <section class="page active" id="page-dashboard" aria-labelledby="welcome-title">
+            <div class="welcome-row">
+              <div><div class="eyebrow"><span class="eyebrow-line"></span> KİŞİSEL TRADE DEFTERİN</div><h1 id="welcome-title">Hoş geldin, <span>trader.</span></h1><p class="page-subtitle">Alışlarını kaydet. Kilitleri takip et. Gerçek kârını gör.</p></div>
+              <div class="date-chip"><span class="date-chip-icon">◷</span><span id="today-label">—</span></div>
+            </div>
+
+            <div class="metric-grid" id="metric-grid">
+              <article class="metric-card metric-profit"><div class="metric-head"><span>Net gerçekleşen kâr</span><span class="metric-icon green">↗</span></div><div class="metric-value" id="metric-total-profit">$0.00</div><div class="metric-foot"><span class="metric-dot green-bg"></span> Satılmış işlemlerden</div><div class="metric-spark spark-green" aria-hidden="true"><svg viewBox="0 0 150 42"><path d="M1 34 20 27 39 30 56 17 74 23 92 12 108 16 126 7 149 10"/></svg></div></article>
+              <article class="metric-card"><div class="metric-head"><span>Bu ayın kârı</span><span class="metric-icon blue">◷</span></div><div class="metric-value" id="metric-month-profit">$0.00</div><div class="metric-foot"><span id="month-trades">0 satış</span><span> · </span><span id="month-label">bu ay</span></div><div class="metric-spark spark-blue" aria-hidden="true"><svg viewBox="0 0 150 42"><path d="M1 35 17 31 34 34 52 20 72 27 91 17 108 20 129 7 149 12"/></svg></div></article>
+              <article class="metric-card"><div class="metric-head"><span>Aktif alış maliyeti</span><span class="metric-icon amber">◈</span></div><div class="metric-value" id="metric-invested">$0.00</div><div class="metric-foot"><span id="active-count">0 aktif kayıt</span><span> · </span><span>kilitte veya beklemede</span></div><div class="metric-spark spark-amber" aria-hidden="true"><svg viewBox="0 0 150 42"><path d="M1 29 21 23 38 28 57 15 75 20 92 12 111 19 130 9 149 14"/></svg></div></article>
+              <article class="metric-card"><div class="metric-head"><span>Planlanan net kâr</span><span class="metric-icon violet">◎</span></div><div class="metric-value" id="metric-forecast">$0.00</div><div class="metric-foot"><span class="metric-dot violet-bg"></span> Tahmini satışlardan</div><div class="metric-spark spark-violet" aria-hidden="true"><svg viewBox="0 0 150 42"><path d="M1 32 19 26 37 29 55 20 74 24 92 14 110 18 130 8 149 11"/></svg></div></article>
+            </div>
+
+            <div class="dashboard-grid">
+              <section class="panel chart-panel">
+                <div class="panel-heading"><div><div class="panel-kicker">PERFORMANS</div><h2>Kâr grafiği</h2></div><div class="chart-controls"><div class="legend"><span><i class="legend-dot realized"></i>Gerçekleşen</span><span><i class="legend-dot forecast"></i>Tahmini</span></div><select id="chart-range" aria-label="Grafik tarih aralığı"><option value="30">Son 30 gün</option><option value="90">Son 90 gün</option><option value="365">Son 12 ay</option><option value="all">Tüm tarihler</option></select></div></div>
+                <div class="chart-summary"><strong id="chart-total">$0.00</strong><span id="chart-period">son 30 gün</span><span class="chart-change" id="chart-change">—</span></div>
+                <div class="chart-canvas" id="profit-chart" role="img" aria-label="Günlere göre net kâr grafiği"></div>
+              </section>
+              <section class="panel lock-panel">
+                <div class="panel-heading"><div><div class="panel-kicker">TRADE KORUMASI</div><h2>Yakında açılacaklar</h2></div><span class="panel-heading-icon">◷</span></div>
+                <div id="unlock-list" class="unlock-list"></div>
+                <button class="text-link" data-page="history">Tüm aktif kayıtları gör <span>→</span></button>
+              </section>
+            </div>
+
+            <section class="panel recent-panel">
+              <div class="panel-heading"><div><div class="panel-kicker">SON HAREKETLER</div><h2>İşlem geçmişi</h2></div><button class="button button-quiet" data-page="history">Tüm kayıtlar <span>→</span></button></div>
+              <div class="table-wrap"><table class="data-table"><thead><tr><th>ÜRÜN</th><th>ALIŞ TARİHİ</th><th>MALİYET</th><th>NET KÂR</th><th>DURUM</th><th></th></tr></thead><tbody id="recent-body"></tbody></table></div>
+              <div class="empty-state" id="dashboard-empty"><div class="empty-orbit"><span>＋</span></div><h3>İlk alışını kaydet</h3><p>Bir item seç, alış ve tahmini satış fiyatını gir. Komisyon sonrası kârını CSELL hesaplasın.</p><button class="button button-primary" data-action="add">İlk kaydı oluştur <span>→</span></button></div>
+            </section>
+            <div class="privacy-note"><span>◈</span> Kayıtların sadece bu tarayıcıda saklanır. Hesap açman gerekmez.</div>
+          </section>
+
+          <section class="page" id="page-history" aria-labelledby="history-title">
+            <div class="page-title-row"><div><div class="eyebrow"><span class="eyebrow-line"></span> TÜM HAREKETLER</div><h1 id="history-title">İşlem geçmişi</h1><p class="page-subtitle">Alışlarını ara, filtrele ve dışa aktar.</p></div><button class="button button-primary" data-action="add"><span class="plus">＋</span> Yeni kayıt</button></div>
+            <div class="history-summary" id="history-summary"></div>
+            <section class="panel history-panel">
+              <div class="filter-bar">
+                <label class="search-box"><span>⌕</span><input id="filter-search" type="search" placeholder="Ürün adı veya işlem no ara…" autocomplete="off" /></label>
+                <select id="filter-status" aria-label="Duruma göre filtrele"><option value="all">Tüm durumlar</option><option value="active">Aktif</option><option value="sold">Satıldı</option></select>
+                <select id="filter-type" aria-label="Ürün türüne göre filtrele"><option value="all">Tüm kategoriler</option><option value="skin">Skin</option><option value="case">Kasa & kapsül</option><option value="agent">Ajan</option><option value="charm">Charm</option><option value="sticker_slab">Sticker Slab</option><option value="sticker">Sticker</option><option value="music_kit">Müzik kiti</option><option value="other">Diğer</option></select>
+                <select id="filter-wear" aria-label="Wear durumuna göre filtrele"><option value="all">Tüm wearler</option><option>Factory New</option><option>Minimal Wear</option><option>Field-Tested</option><option>Well-Worn</option><option>Battle-Scarred</option></select>
+                <select id="filter-sort" aria-label="Sıralama"><option value="date-desc">En yeni</option><option value="date-asc">En eski</option><option value="profit-desc">En yüksek kâr</option><option value="profit-asc">En düşük kâr</option><option value="cost-desc">En yüksek maliyet</option></select>
+                <label class="date-filter"><span>Başlangıç</span><input id="filter-from" type="date" aria-label="Başlangıç tarihi" /></label><label class="date-filter"><span>Bitiş</span><input id="filter-to" type="date" aria-label="Bitiş tarihi" /></label>
+                <button class="button button-outline" id="export-csv"><span>↧</span> CSV</button>
+              </div>
+              <div class="table-wrap"><table class="data-table history-table"><thead><tr><th><button class="sort-head" data-sort="id">İŞLEM NO <span>↕</span></button></th><th>ÜRÜN / İÇERİK</th><th><button class="sort-head" data-sort="date">ALIŞ TARİHİ <span>↕</span></button></th><th>MALİYET</th><th>NET SATIŞ</th><th><button class="sort-head" data-sort="profit">NET KÂR <span>↕</span></button></th><th>DURUM</th><th></th></tr></thead><tbody id="history-body"></tbody></table></div>
+              <div class="empty-state compact-empty" id="history-empty"><div class="empty-orbit"><span>⌕</span></div><h3>Bu filtreye uygun kayıt yok</h3><p>Filtreleri temizle ya da yeni bir işlem ekle.</p><button class="button button-outline" id="clear-filters">Filtreleri temizle</button></div>
+              <div class="table-footer"><span id="result-count">0 kayıt</span><span>Yerel geçmiş · <button class="inline-link" id="export-json">JSON yedeği al</button></span></div>
+            </section>
+          </section>
+
+          <section class="page" id="page-reports" aria-labelledby="reports-title">
+            <div class="page-title-row"><div><div class="eyebrow"><span class="eyebrow-line"></span> PERFORMANS ANALİZİ</div><h1 id="reports-title">Raporlar</h1><p class="page-subtitle">Gerçekleşen sonuçları ve açık pozisyonları birlikte incele.</p></div><label class="report-month">Dönem <select id="report-month"><option value="current">Bu ay</option><option value="previous">Geçen ay</option><option value="year">Bu yıl</option><option value="all">Tüm zamanlar</option></select></label></div>
+            <div class="report-cards" id="report-cards"></div>
+            <div class="dashboard-grid report-grid"><section class="panel chart-panel"><div class="panel-heading"><div><div class="panel-kicker">AYLIK ÖZET</div><h2>Aylara göre gerçekleşen kâr</h2></div></div><div class="chart-canvas report-chart" id="monthly-chart"></div></section><section class="panel"><div class="panel-heading"><div><div class="panel-kicker">DAĞILIM</div><h2>Kategori performansı</h2></div></div><div id="category-report" class="category-report"></div></section></div>
+            <section class="panel report-table-panel"><div class="panel-heading"><div><div class="panel-kicker">EN ÇOK İŞLEM GÖREN</div><h2>Öne çıkan itemler</h2></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>ITEM</th><th>İŞLEM</th><th>ORT. ALIŞ</th><th>ORT. SATIŞ</th><th>TOPLAM NET KÂR</th></tr></thead><tbody id="item-report-body"></tbody></table></div><div class="empty-state compact-empty" id="report-empty"><p>Rapor oluşturmak için işlem geçmişine kayıt ekle.</p></div></section>
+          </section>
+
+          <section class="page" id="page-settings" aria-labelledby="settings-title">
+            <div class="eyebrow"><span class="eyebrow-line"></span> TERCİHLER</div><h1 id="settings-title">Ayarlar</h1><p class="page-subtitle">Hesaplamaları ve yerel verilerini yönet.</p>
+            <div class="settings-layout">
+              <section class="panel settings-panel language-panel"><div class="settings-section-heading"><div class="settings-icon cyan">文</div><div><h2>Site dili</h2><p>İlk açılışta tarayıcının dilini kullanır; bu menüden istediğin zaman değiştirebilirsin.</p></div></div><label class="field language-field"><span>Arayüz dili</span><select id="setting-language"><option value="en">English</option><option value="tr">Türkçe</option></select><small>Tercihin bu tarayıcıda saklanır.</small></label></section>
+              <section class="panel settings-panel"><div class="settings-section-heading"><div class="settings-icon">％</div><div><h2>Satış komisyonu</h2><p>Her bir itemin satış fiyatına ayrı uygulanır.</p></div></div><div class="settings-fields"><label class="field"><span>Komisyon oranı</span><div class="input-suffix"><input id="setting-fee-rate" type="number" min="0" max="100" step="0.1" value="2" /><span>%</span></div><small>Varsayılan %2; ücret cent seviyesinde yukarı yuvarlanır.</small></label><label class="field"><span>İşlem başına ek kesinti</span><div class="input-prefix"><span>$</span><input id="setting-fee-fixed" type="number" min="0" step="0.01" value="0" /></div><small>Her satılan item için sabit bir ücret ekleyebilirsin.</small></label><label class="field"><span>Varsayılan trade kilidi</span><div class="input-suffix"><input id="setting-lock-days" type="number" min="0" max="365" step="1" value="8" /><span>gün</span></div><small>Alış anından itibaren tam gün olarak hesaplanır.</small></label></div><button class="button button-primary" id="save-settings">Ayarları kaydet</button></section>
+              <section class="panel settings-panel"><div class="settings-section-heading"><div class="settings-icon cyan">◈</div><div><h2>Verilerin ve yedekler</h2><p>Kayıtlar yalnızca bu tarayıcıdaki yerel veritabanına yazılır.</p></div></div><div class="data-actions"><button class="data-action" id="backup-json"><span class="data-action-icon">↧</span><span><strong>Yedeği dışa aktar</strong><small>Tüm kayıtların ve ayarların JSON dosyası</small></span><b>→</b></button><label class="data-action file-action"><span class="data-action-icon">↥</span><span><strong>Yedekten geri yükle</strong><small>Önceden dışa aktarılan CSELL JSON dosyası</small></span><b>→</b><input id="restore-file" type="file" accept="application/json,.json" /></label><button class="data-action danger-action" id="delete-all"><span class="data-action-icon">⌫</span><span><strong>Tüm kayıtları sil</strong><small>Bu tarayıcıdaki işlem geçmişi kalıcı olarak silinir</small></span><b>→</b></button></div></section>
+              <section class="panel settings-panel about-panel"><div class="settings-section-heading"><div class="settings-icon">ⓘ</div><div><h2>CSELL hakkında</h2><p>CS2 alış ve satışların için sade, ücretsiz bir takip defteri.</p></div></div><div class="about-grid"><div><small>SÜRÜM</small><strong>1.0.0</strong></div><div><small>ITEM KATALOĞU</small><strong id="settings-catalog-status">İlk kullanımda yüklenir</strong></div><div><small>KAYITLAR</small><strong id="settings-record-count">0 işlem</strong></div></div><p class="attribution">Ürün isimleri ve görseller, <a href="https://github.com/ByMykel/CSGO-API" target="_blank" rel="noopener noreferrer">ByMykel/CSGO-API</a> topluluk kataloğundan alınır. CS2 ve tüm ilgili içerikler Valve'ın mülkiyetindedir; CSELL bağımsız bir hayran projesidir.</p></section>
+            </div>
+          </section>
+        </div>
+        <footer class="site-footer"><span>© <span id="year-now"></span> CSELL</span><span>Bağımsız topluluk projesi · Steam, Valve veya CSFloat ile bağlantılı değildir.</span><a href="https://steamcommunity.com/tradeoffer/new/?partner=1800489426&amp;token=jIoKxNd7" target="_blank" rel="noopener noreferrer">Geliştiriciyi destekle ↗</a></footer>
+      </main>
+    </div>
+    <div class="mobile-scrim" id="mobile-scrim"></div>
+
+    <dialog class="trade-dialog" id="trade-dialog" aria-labelledby="dialog-title">
+      <form id="trade-form" method="dialog">
+        <div class="dialog-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> ALIŞ KAYDI <span id="dialog-id" class="dialog-record-id"></span></div><h2 id="dialog-title">Yeni işlem oluştur</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Pencereyi kapat">×</button></div>
+        <div class="dialog-body">
+          <div class="form-section"><div class="form-section-title"><span class="step-number">01</span><div><strong>Aldığın ürünü seç</strong><small>Skin, kasa, ajan veya CS2'deki diğer itemler</small></div></div><div class="category-pills" id="category-pills"></div><div class="item-picker-wrap"><label class="field"><span id="item-picker-label">Item ara</span><div class="picker-input"><span>⌕</span><input id="item-search" type="search" placeholder="Örnek: M4A4 | Desolate Space" autocomplete="off" /><span id="picker-loading" class="picker-loading" hidden>Yükleniyor…</span></div></label><div class="item-results" id="item-results" role="listbox" aria-label="Ürün arama sonuçları" hidden></div><label class="manual-toggle"><input type="checkbox" id="manual-item-toggle" /><span>Listede yok, ürün adını kendim yazacağım</span></label><div class="manual-fields" id="manual-fields" hidden><label class="field"><span>Ürünün tam adı</span><input id="manual-name" type="text" maxlength="180" placeholder="Örnek: M4A4 | Desolate Space (Field-Tested)" /></label><label class="field"><span>Görsel URL'si <em>isteğe bağlı</em></span><input id="manual-image" type="url" placeholder="https://…" /></label></div><div id="selected-main" class="selected-item-card" hidden></div></div></div>
+
+          <div class="form-section"><div class="form-section-title"><span class="step-number">02</span><div><strong>Beraberinde aldıkların</strong><small>Her itemi ayrı seç; satışta komisyon her satıra uygulanır.</small></div></div><div class="attachment-grid"><article class="attachment-card"><div class="attachment-card-head"><span class="attachment-symbol charm-symbol">◇</span><div><strong>Charm</strong><small>Silahla birlikte geldiyse ekle</small></div><label class="switch"><input type="checkbox" id="has-charm" /><span></span></label></div><div class="attachment-picker" id="charm-picker" hidden><input type="search" id="charm-search" placeholder="Charm ara…" autocomplete="off" /><div class="item-results mini-results" id="charm-results" role="listbox"></div><div class="selected-attachment" id="selected-charm" hidden></div><label class="field mini-price"><span>Beklenen satış fiyatı</span><div class="input-prefix"><span>$</span><input id="charm-sale" type="number" min="0" step="0.01" placeholder="0.00" /></div></label></div></article>
+              <article class="attachment-card"><div class="attachment-card-head"><span class="attachment-symbol slab-symbol">▧</span><div><strong>Sticker Slab</strong><small>İçindeki stickerı seç</small></div><label class="switch"><input type="checkbox" id="has-slab" /><span></span></label></div><div class="attachment-picker" id="slab-picker" hidden><input type="search" id="slab-search" placeholder="Sticker veya slab ara…" autocomplete="off" /><div class="item-results mini-results" id="slab-results" role="listbox"></div><div class="selected-attachment" id="selected-slab" hidden></div><label class="field mini-price"><span>Beklenen satış fiyatı</span><div class="input-prefix"><span>$</span><input id="slab-sale" type="number" min="0" step="0.01" placeholder="0.00" /></div></label></div></article></div><button class="text-link attachment-extra-toggle" type="button" id="more-attachments">＋ Başka bir item daha ekle</button><div class="extra-attachment-form" id="extra-attachment-form" hidden><div class="extra-row"><select id="extra-category" aria-label="Ek item kategorisi"><option value="sticker">Sticker</option><option value="case">Kasa & kapsül</option><option value="agent">Ajan</option><option value="music_kit">Müzik kiti</option><option value="patch">Patch</option><option value="graffiti">Graffiti</option><option value="collectible">Koleksiyon ürünü</option><option value="key">Kasa anahtarı</option></select><input id="extra-search" type="search" placeholder="Item ara…" autocomplete="off" /><div class="extra-results item-results" id="extra-results" role="listbox"></div><button class="icon-button" id="close-extra" type="button" aria-label="Kapat">×</button></div><div id="extra-selected-list"></div></div></div>
+
+          <div class="form-section"><div class="form-section-title"><span class="step-number">03</span><div><strong>Alış ve satış bilgileri</strong><small>Beklenen fiyatları gir; net tutarlar anında hesaplansın.</small></div></div><div class="price-input-grid"><label class="field"><span>Toplam alış maliyeti <b class="required-mark">*</b></span><div class="input-prefix large-input"><span>$</span><input id="buy-price" type="number" min="0" step="0.01" placeholder="0.00" required /></div></label><label class="field"><span>Ana itemin satış fiyatı</span><div class="input-prefix large-input"><span>$</span><input id="main-sale" type="number" min="0" step="0.01" placeholder="0.00" /></div></label></div><div class="sale-lines-preview" id="sale-lines-preview"></div><div class="calculation-example"><span>ÖRNEK HESAP</span><p>$12.50 skin + $0.32 slab satışı → komisyon sonrası $12.25 + $0.31. $11.90 alış maliyetinden sonra <strong>+$0.66 net kâr.</strong></p></div></div>
+
+          <div class="form-section timing-section"><div class="form-section-title"><span class="step-number">04</span><div><strong>Alış zamanı ve trade kilidi</strong><small id="lock-info">Kilit açılışı alış anından tam 8 × 24 saat sonra hesaplanır.</small></div></div><div class="timing-grid"><label class="field"><span>Alış tarihi ve saati</span><input id="bought-at" type="datetime-local" required /></label><label class="field"><span>Kilit süresi</span><div class="input-suffix"><input id="lock-days" type="number" min="0" max="365" step="1" value="8" /><span>gün</span></div></label></div><div class="unlock-preview" id="unlock-preview"><span class="unlock-preview-icon">◷</span><span><small>TAHMİNİ TRADE AÇILIŞI</small><strong id="unlock-preview-date">—</strong></span><span class="unlock-preview-tag">alıştan itibaren</span></div></div>
+
+          <div class="realized-section" id="realized-section" hidden><div class="form-section-title"><span class="step-number sold-step">✓</span><div><strong>Gerçek satış sonucu</strong><small>Ürünleri sattıysan gerçekleşen fiyatları kaydet.</small></div></div><label class="sold-toggle"><input type="checkbox" id="mark-sold" /><span>Bu işlemi satıldı olarak işaretle</span></label><div id="actual-prices" class="actual-prices" hidden></div></div>
+          <label class="field notes-field"><span>Not <em>isteğe bağlı</em></span><textarea id="trade-notes" rows="2" maxlength="500" placeholder="Float, pattern, satın aldığın pazar yeri veya başka bir not…"></textarea></label>
+        </div>
+        <div class="dialog-footer"><div class="profit-estimate"><span id="estimate-label">Komisyon sonrası tahmini kâr</span><strong id="estimate-profit">$0.00</strong><small id="estimate-detail">Satış fiyatlarını girince hesaplanır</small></div><div class="dialog-actions"><button class="button button-quiet" type="button" data-close-dialog>Vazgeç</button><button class="button button-primary" id="save-trade" type="submit">Kaydı oluştur <span>→</span></button></div></div>
+      </form>
+    </dialog>
+
+    <dialog class="detail-dialog" id="detail-dialog" aria-labelledby="detail-title"><div class="detail-header"><div><div class="eyebrow"><span class="eyebrow-line"></span><span id="detail-id">C-000000</span></div><h2 id="detail-title">İşlem detayı</h2></div><button class="icon-button" type="button" data-close-detail aria-label="Pencereyi kapat">×</button></div><div id="detail-content" class="detail-content"></div><div class="detail-footer"><button class="button button-outline" id="detail-edit">Düzenle</button><button class="button button-primary" id="detail-sold">Satıldı olarak işaretle</button></div></dialog>
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <script src="./i18n.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

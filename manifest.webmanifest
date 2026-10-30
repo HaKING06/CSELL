@@ -1,0 +1,12 @@
+{
+  "name": "CSELL — CS2 Trade Journal",
+  "short_name": "CSELL",
+  "description": "CS2 item alışlarını, trade kilitlerini ve net kârını takip et.",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1016",
+  "theme_color": "#0b1016",
+  "icons": [{"src":"./assets/csell-mark.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

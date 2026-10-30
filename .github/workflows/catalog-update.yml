@@ -1,0 +1,33 @@
+name: Refresh CS2 item catalog
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Download and normalize current CS2 item data
+        run: node scripts/update-catalog.mjs
+      - name: Commit changed catalog files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/catalog data/catalog-meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh CS2 item catalog"
+            git push
+          else
+            echo "Catalog already up to date."
+          fi
