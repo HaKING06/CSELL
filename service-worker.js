@@ -1,4 +1,4 @@
-const CACHE_NAME='csell-shell-v3';
+const CACHE_NAME='csell-shell-v4';
 const SHELL=['./','./index.html','./styles.css','./app.js','./i18n.js','./manifest.webmanifest','./assets/csell-mark.svg','./favicon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));

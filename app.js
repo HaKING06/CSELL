@@ -1,5 +1,6 @@
 const DB_NAME = 'csell-local-v1';
 const DB_VERSION = 1;
+const MAX_LOCK_DAYS = 7;
 const API_ROOT = 'https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en';
 const CATALOG_FILES = {
   skin: 'skins_not_grouped.json', agent: 'agents.json', case: 'crates.json', sticker: 'stickers.json',
@@ -11,7 +12,7 @@ const LABELS = {
   charm:'Charm', music_kit:'Müzik kiti', patch:'Patch', graffiti:'Graffiti', collectible:'Koleksiyon ürünü', key:'Kasa anahtarı', other:'Diğer'
 };
 const PILL_CATEGORIES = ['skin','case','agent','sticker','sticker_slab','charm','music_kit','patch','graffiti','collectible','key'];
-const state = { db:null, trades:[], settings:{ feeRate:2, feeFixed:0, lockDays:8, nextId:1 }, catalog:new Map(), catalogPromises:new Map(), catalogUpdated:new Map(), activePage:'dashboard', editor:{ recordId:null, category:'skin', main:null, charm:null, slab:null, extras:[], selectedItem:null }, detailId:null, filters:{ search:'',status:'all',type:'all',wear:'all',from:'',to:'',sort:'date-desc' } };
+const state = { db:null, trades:[], settings:{ feeRate:2, feeFixed:0, lockDays:7, nextId:1 }, catalog:new Map(), catalogPromises:new Map(), catalogUpdated:new Map(), activePage:'dashboard', editor:{ recordId:null, category:'skin', main:null, charm:null, slab:null, extras:[], selectedItem:null }, detailId:null, filters:{ search:'',status:'all',type:'all',wear:'all',from:'',to:'',sort:'date-desc' } };
 const $ = (selector, root=document) => root.querySelector(selector);
 const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
 const locale = () => window.CSELL_I18N?.locale?.() || 'tr-TR';
@@ -45,6 +46,7 @@ function dbRequest(store,method,value){
 }
 const money=(value)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2}).format((Number(value)||0)/100);
 const cents=(value)=>Math.round((Number.parseFloat(value)||0)*100);
+const clampLockDays=(value)=>Math.min(MAX_LOCK_DAYS,Math.max(0,Math.round(Number(value)||0)));
 const feeCents=(gross,settings=state.settings)=>gross>0?Math.max(1,Math.ceil(gross*(Number(settings.feeRate)||0)/100))+Math.round((Number(settings.feeFixed)||0)*100):0;
 const netCents=(gross,settings=state.settings)=>Math.max(0,gross-feeCents(gross,settings));
 const escapeHtml=(value)=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -484,7 +486,7 @@ function editorRecord(){
   const main=state.editor.main;
   const extras=state.editor.extras.map(item=>({...item,sale:cents($(`[data-extra-price="${CSS.escape(item.lineId)}"]`)?.value)}));
   const actualPrices={};$$('[data-actual-price]').forEach(input=>actualPrices[input.dataset.actualPrice]=cents(input.value));
-  return {main,charm:state.editor.charm,slab:state.editor.slab,extras,category:main?.category||state.editor.category,name:itemName(main),image:itemImage(main),mainSale:cents($('#main-sale').value),charmSale:cents($('#charm-sale').value),slabSale:cents($('#slab-sale').value),buyCents:cents($('#buy-price').value),boughtAt:new Date($('#bought-at').value).toISOString(),lockDays:Math.max(0,Number($('#lock-days').value)||0),notes:$('#trade-notes').value.trim(),actualPrices,soldAt:$('#mark-sold').checked?(state.trades.find(t=>t.id===state.editor.recordId)?.soldAt||new Date().toISOString()):null,updatedAt:new Date().toISOString()};
+  return {main,charm:state.editor.charm,slab:state.editor.slab,extras,category:main?.category||state.editor.category,name:itemName(main),image:itemImage(main),mainSale:cents($('#main-sale').value),charmSale:cents($('#charm-sale').value),slabSale:cents($('#slab-sale').value),buyCents:cents($('#buy-price').value),boughtAt:new Date($('#bought-at').value).toISOString(),lockDays:clampLockDays($('#lock-days').value),notes:$('#trade-notes').value.trim(),actualPrices,soldAt:$('#mark-sold').checked?(state.trades.find(t=>t.id===state.editor.recordId)?.soldAt||new Date().toISOString()):null,updatedAt:new Date().toISOString()};
 }
 function addRecordEvent(record,type,description,at=new Date().toISOString()){
   record.events=[...(record.events||[]),{type,description,at}];
@@ -552,8 +554,8 @@ function downloadBlob(content,name,type){const blob=new Blob([content],{type}),u
 async function restoreJson(file){
   try{const payload=JSON.parse(await file.text());if(payload.app!=='CSELL'||!Array.isArray(payload.trades))throw new Error('Bu dosya CSELL yedeği değil.');
     if(!confirm(`${payload.trades.length} kayıt yüklenecek. Mevcut kayıtlar aynı işlem numaraları için güncellenecek. Devam edilsin mi?`))return;
-    let restored=0;for(const record of payload.trades){if(!record.id||!record.boughtAt||!record.main)continue;await dbRequest('trades','put',record);restored++}
-    if(payload.settings)state.settings={...state.settings,...payload.settings};
+    let restored=0;for(const record of payload.trades){if(!record.id||!record.boughtAt||!record.main)continue;const normalized={...record,lockDays:clampLockDays(record.lockDays)};await dbRequest('trades','put',normalized);restored++}
+    if(payload.settings)state.settings={...state.settings,...payload.settings};state.settings.lockDays=clampLockDays(state.settings.lockDays);
     const highestId=Math.max(0,...state.trades.map(record=>Number(String(record.id||'').replace(/\D/g,''))||0),...payload.trades.map(record=>Number(String(record.id||'').replace(/\D/g,''))||0));state.settings.nextId=Math.max(Number(state.settings.nextId)||1,highestId+1);
     await dbRequest('settings','put',{key:'app',value:state.settings});await refreshTrades();toast(`${restored} kayıt yedekten yüklendi.`)
   }catch(error){toast(error.message||'Yedek dosyası okunamadı.','error')}
@@ -595,7 +597,7 @@ function attachEvents(){
   $('#extra-search').addEventListener('input',async()=>{const category=$('#extra-category').value;if(!state.catalog.has(category))await ensureCatalog(category);renderResults($('#extra-results'),matchingItems(category,$('#extra-search').value),category,'extra')});
   $('#close-extra').addEventListener('click',()=>$('#extra-attachment-form').hidden=true);
   for(const selector of ['#buy-price','#main-sale','#charm-sale','#slab-sale'])$(selector).addEventListener('input',()=>{updateSalePreview();if($('#mark-sold').checked)renderActualPrices()});
-  $('#bought-at').addEventListener('input',updateUnlockPreview);$('#lock-days').addEventListener('input',updateUnlockPreview);
+  $('#bought-at').addEventListener('input',updateUnlockPreview);$('#lock-days').addEventListener('input',event=>{const days=clampLockDays(event.target.value);event.target.value=days;updateUnlockPreview()});$('#setting-lock-days').addEventListener('input',event=>{event.target.value=clampLockDays(event.target.value)});
   $('#mark-sold').addEventListener('change',event=>{$('#actual-prices').hidden=!event.target.checked;renderActualPrices(state.trades.find(t=>t.id===state.editor.recordId));updateProfitEstimate()});
   $('#detail-edit').addEventListener('click',()=>{const id=state.detailId;$('#detail-dialog').close();openTradeDialog(id)});
   $('#detail-sold').addEventListener('click',()=>markSold(state.detailId));
@@ -619,7 +621,7 @@ function attachEvents(){
     location.reload();
   });
   $('#save-settings').addEventListener('click',async()=>{
-    const feeRate=Math.min(100,Math.max(0,Number($('#setting-fee-rate').value)||0));const feeFixed=Math.max(0,cents($('#setting-fee-fixed').value));const lockDays=Math.min(365,Math.max(0,Math.round(Number($('#setting-lock-days').value)||0)));
+    const feeRate=Math.min(100,Math.max(0,Number($('#setting-fee-rate').value)||0));const feeFixed=Math.max(0,cents($('#setting-fee-fixed').value));const lockDays=clampLockDays($('#setting-lock-days').value);
     state.settings={...state.settings,feeRate,feeFixed,lockDays};await dbRequest('settings','put',{key:'app',value:state.settings});renderDashboard();toast('Hesaplama ayarları kaydedildi.')
   });
   $('#delete-all').addEventListener('click',async()=>{if(!confirm('Bu tarayıcıda saklanan tüm işlem kayıtları silinsin mi? Bu işlem geri alınamaz.'))return;await dbRequest('trades','clear');state.trades=[];state.settings.nextId=1;await dbRequest('settings','put',{key:'app',value:state.settings});await refreshTrades();toast('Tüm işlem kayıtları silindi.')});
@@ -632,12 +634,14 @@ function attachEvents(){
 async function init(){
   try{
     state.db=await openDb();
-    const saved=await dbRequest('settings','get','app');if(saved?.value)state.settings={...state.settings,...saved.value};
+    const saved=await dbRequest('settings','get','app');if(saved?.value)state.settings={...state.settings,...saved.value};state.settings.lockDays=clampLockDays(state.settings.lockDays);
     if(state.settings.language==='tr'||state.settings.language==='en'){
       window.CSELL_LANGUAGE=state.settings.language;
       try{localStorage.setItem('csell-language',window.CSELL_LANGUAGE)}catch{}
     }
     state.trades=await dbRequest('trades','getAll');
+    for(const record of state.trades){const lockDays=clampLockDays(record.lockDays);if(lockDays!==record.lockDays){record.lockDays=lockDays;await dbRequest('trades','put',record)}}
+    await dbRequest('settings','put',{key:'app',value:state.settings});
   }catch(error){
     console.error('CSELL local storage:',error);toast('Yerel veritabanı açılamadı. Tarayıcı depolama iznini kontrol et.','error');
   }
