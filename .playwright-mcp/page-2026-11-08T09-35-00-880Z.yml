@@ -1,0 +1,144 @@
+- generic [ref=f1e2]:
+  - complementary "Ana menü" [ref=f1e3]:
+    - link "CSELL ana sayfa" [ref=f1e4] [cursor=pointer]:
+      - /url: "#dashboard"
+      - generic [ref=f1e5]:
+        - strong [ref=f1e6]: CSELL
+        - generic [ref=f1e7]: TRADE JOURNAL
+    - generic [ref=f1e8]: ÇALIŞMA ALANI
+    - navigation [ref=f1e9]:
+      - button "◫ Genel bakış" [ref=f1e10] [cursor=pointer]:
+        - generic [ref=f1e11]: ◫
+        - generic [ref=f1e12]: Genel bakış
+      - button "▤ Geçmiş kayıtlar 0" [ref=f1e13] [cursor=pointer]:
+        - generic [ref=f1e14]: ▤
+        - generic [ref=f1e15]: Geçmiş kayıtlar
+        - generic [ref=f1e16]: "0"
+      - button "▥ Raporlar" [ref=f1e17] [cursor=pointer]:
+        - generic [ref=f1e18]: ▥
+        - generic [ref=f1e19]: Raporlar
+    - generic [ref=f1e21]: YÖNETİM
+    - navigation [ref=f1e22]:
+      - button "⚙ Ayarlar" [ref=f1e23] [cursor=pointer]:
+        - generic [ref=f1e24]: ⚙
+        - generic [ref=f1e25]: Ayarlar
+    - generic [ref=f1e26]:
+      - generic [ref=f1e27]:
+        - generic [ref=f1e28]:
+          - generic [ref=f1e29]: ✳
+          - generic [ref=f1e30]: Bağımsız geliştirildi
+        - paragraph [ref=f1e31]: CSELL ücretsiz. Geliştirmeyi desteklemek istersen Steam'den katkıda bulunabilirsin.
+        - link "Steam'den destek ol ↗" [ref=f1e32] [cursor=pointer]:
+          - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7
+          - text: Steam'den destek ol
+          - generic [ref=f1e33]: ↗
+      - generic [ref=f1e34]:
+        - generic [ref=f1e35]: C
+        - generic [ref=f1e36]:
+          - strong [ref=f1e37]: Yerel profil
+          - generic [ref=f1e38]: Veriler bu cihazda saklanır
+  - main [ref=f1e40]:
+    - generic [ref=f1e41]:
+      - generic [ref=f1e42]:
+        - generic [ref=f1e43]: Çalışma alanı
+        - generic [ref=f1e44]: /
+        - strong [ref=f1e45]: Genel bakış
+      - generic [ref=f1e46]:
+        - generic [ref=f1e47]: Katalog güncel
+        - button "＋ Yeni kayıt" [active] [ref=f1e50] [cursor=pointer]:
+          - generic [ref=f1e51]: ＋
+          - text: Yeni kayıt
+    - region [ref=f1e53]:
+      - generic [ref=f1e54]:
+        - generic [ref=f1e55]:
+          - generic [ref=f1e56]: KİŞİSEL TRADE DEFTERİN
+          - heading "Hoş geldin, trader." [level=1] [ref=f1e58]
+          - paragraph [ref=f1e59]: Alışlarını kaydet. Kilitleri takip et. Gerçek kârını gör.
+        - generic [ref=f1e60]:
+          - generic [ref=f1e61]: ◷
+          - generic [ref=f1e62]: 8 Kasım 2026 Pazar
+      - generic [ref=f1e63]:
+        - article [ref=f1e64]:
+          - generic [ref=f1e65]:
+            - generic [ref=f1e66]: Net gerçekleşen kâr
+            - generic [ref=f1e67]: ↗
+          - generic [ref=f1e68]: $0.00
+          - generic [ref=f1e69]: Satılmış işlemlerden
+        - article [ref=f1e74]:
+          - generic [ref=f1e75]:
+            - generic [ref=f1e76]: Bu ayın kârı
+            - generic [ref=f1e77]: ◷
+          - generic [ref=f1e78]: $0.00
+          - generic [ref=f1e79]:
+            - generic [ref=f1e80]: 0 satış
+            - generic [ref=f1e81]: ·
+            - generic [ref=f1e82]: Kasım
+        - article [ref=f1e86]:
+          - generic [ref=f1e87]:
+            - generic [ref=f1e88]: Aktif alış maliyeti
+            - generic [ref=f1e89]: ◈
+          - generic [ref=f1e90]: $0.00
+          - generic [ref=f1e91]:
+            - generic [ref=f1e92]: 0 aktif kayıt
+            - generic [ref=f1e93]: ·
+            - generic [ref=f1e94]: kilitte veya beklemede
+        - article [ref=f1e98]:
+          - generic [ref=f1e99]:
+            - generic [ref=f1e100]: Planlanan net kâr
+            - generic [ref=f1e101]: ◎
+          - generic [ref=f1e102]: $0.00
+          - generic [ref=f1e103]: Tahmini satışlardan
+      - generic [ref=f1e108]:
+        - generic [ref=f1e109]:
+          - generic [ref=f1e110]:
+            - generic [ref=f1e111]:
+              - generic [ref=f1e112]: PERFORMANS
+              - heading "Kâr grafiği" [level=2] [ref=f1e113]
+            - generic [ref=f1e114]:
+              - generic [ref=f1e115]:
+                - generic [ref=f1e116]: Gerçekleşen
+                - generic [ref=f1e118]: Tahmini
+              - combobox "Grafik tarih aralığı" [ref=f1e120]:
+                - option "Son 30 gün" [selected]
+                - option "Son 90 gün"
+                - option "Son 12 ay"
+                - option "Tüm tarihler"
+          - generic [ref=f1e121]:
+            - strong [ref=f1e122]: $0.00
+            - generic [ref=f1e123]: son 30 gün
+            - generic [ref=f1e124]: —
+          - img "Günlere göre net kâr grafiği" [ref=f1e125]:
+            - generic [ref=f1e388]: İlk satışını kaydettiğinde kâr eğrin burada görünecek.
+        - generic [ref=f1e127]:
+          - generic [ref=f1e128]:
+            - generic [ref=f1e129]:
+              - generic [ref=f1e130]: TRADE KORUMASI
+              - heading "Yakında açılacaklar" [level=2] [ref=f1e131]
+            - generic [ref=f1e132]: ◷
+          - generic [ref=f1e133]: Aktif trade kilidi bulunmuyor.
+          - button "Tüm aktif kayıtları gör →" [ref=f1e135] [cursor=pointer]:
+            - text: Tüm aktif kayıtları gör
+            - generic [ref=f1e136]: →
+      - generic [ref=f1e137]:
+        - generic [ref=f1e138]:
+          - generic [ref=f1e139]:
+            - generic [ref=f1e140]: SON HAREKETLER
+            - heading "İşlem geçmişi" [level=2] [ref=f1e141]
+          - button "Tüm kayıtlar →" [ref=f1e142] [cursor=pointer]:
+            - text: Tüm kayıtlar
+            - generic [ref=f1e143]: →
+        - generic [ref=f1e144]:
+          - generic [ref=f1e145]: ＋
+          - heading "İlk alışını kaydet" [level=3] [ref=f1e147]
+          - paragraph [ref=f1e148]: Bir item seç, alış ve tahmini satış fiyatını gir. Komisyon sonrası kârını CSELL hesaplasın.
+          - button "İlk kaydı oluştur →" [ref=f1e149] [cursor=pointer]:
+            - text: İlk kaydı oluştur
+            - generic [ref=f1e150]: →
+      - generic [ref=f1e151]:
+        - generic [ref=f1e152]: ◈
+        - text: Kayıtların sadece bu tarayıcıda saklanır. Hesap açman gerekmez.
+    - generic [ref=f1e153]:
+      - generic [ref=f1e154]: © 2026 CSELL
+      - generic [ref=f1e155]: Bağımsız topluluk projesi · Steam, Valve veya CSFloat ile bağlantılı değildir.
+      - link "Geliştiriciyi destekle ↗" [ref=f1e156] [cursor=pointer]:
+        - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7

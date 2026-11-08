@@ -28,3 +28,34 @@
 .calculation-example{display:flex;gap:9px;margin-top:9px;padding:8px 10px;border:1px solid #2c3c39;border-radius:5px;background:#14201c}.calculation-example>span{padding-top:1px;color:#9bcf83;font:8px var(--mono);letter-spacing:.04em;white-space:nowrap}.calculation-example p{margin:0;color:#879990;font-size:8px;line-height:1.55}.calculation-example strong{color:#bbec99;font-weight:600}
 @media(max-width:1200px){.history-panel .filter-bar select{flex:1;max-width:none}.date-filter{flex:1}.date-filter input{width:100%;min-width:0}}
 @media(max-width:600px){.date-filter{min-width:calc(50% - 3px);grid-template-columns:auto minmax(90px,1fr);flex:1}.date-filter input{width:100%}.history-panel .filter-bar #filter-wear,.history-panel .filter-bar #filter-sort{max-width:none}}
+
+.metric-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.metric-icon.cyan{color:#7bd8d1;background:#203737}
+.spark-cyan path{stroke:#7bd8d1}
+.queue-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:12px;padding:3px;border:1px solid #25343c;border-radius:6px;background:#0e161b}
+.queue-tab{min-width:0;display:flex;align-items:center;justify-content:space-between;gap:7px;padding:6px 8px;border:1px solid transparent;border-radius:4px;background:transparent;color:#829298;font-size:9px;text-align:left;transition:background .15s,color .15s,border .15s}
+.queue-tab:hover{color:#d9e5df}
+.queue-tab.active{border-color:#344a3a;background:#1a2920;color:#c3f49d}
+.queue-tab b{min-width:18px;padding:1px 4px;border-radius:4px;background:#1c2a30;color:#9aa9ac;font:9px var(--mono);text-align:center}
+.queue-tab.active b{background:#2b432e;color:#d1f5b4}
+.unlock-item{width:100%;min-width:0;border-right:0;border-bottom:0;border-left:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.unlock-item:hover{background:#172229}
+.unlock-item-copy{min-width:0}
+.unlock-item-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.unlock-item-copy small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.unlock-countdown.is-ready{max-width:76px;color:#b3f184;font-size:8px;text-align:right;white-space:normal}
+.lock-panel .text-link{margin-top:3px}
+.calculation-example{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:10px;padding:10px 12px;border-color:#2e4837;background:linear-gradient(110deg,#15221b,#14201d)}
+.calculation-example>div{display:grid;gap:3px;min-width:0}
+.calculation-example>div>span{color:#92b27f;font:500 8px var(--mono);letter-spacing:.08em}
+.calculation-example small{overflow:hidden;color:#8ea099;font-size:8px;text-overflow:ellipsis;white-space:nowrap}
+.calculation-example>strong{flex:none;color:#bdf191;font:700 16px var(--display);white-space:nowrap}
+.calculation-example>strong.negative{color:#ee9b96}
+.lock-duration-inputs{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.lock-duration-inputs>label{min-width:0;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px;height:34px;padding:0 9px;border:1px solid #314049;border-radius:5px;background:#111a20;color:#829398;font-size:9px}
+.lock-duration-inputs input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#e0eae3;font:10px var(--mono)}
+.lock-duration-inputs input::-webkit-inner-spin-button,.lock-duration-inputs input::-webkit-outer-spin-button{margin:0}
+.timing-grid>.field{min-width:0}
+@media(min-width:851px) and (max-width:1200px){.filter-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch}.filter-bar>*{min-width:0;width:100%;max-width:none}.search-box{grid-column:span 2}.filter-bar select{width:100%;min-width:0;padding-right:20px}.date-filter{grid-column:span 2;min-width:0}.date-filter input{width:100%;min-width:0}.filter-bar .button{justify-self:start;width:auto}}
+@media(max-width:1200px){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.calculation-example{align-items:flex-start}.calculation-example small{white-space:normal}.calculation-example>strong{font-size:14px}.lock-panel{min-height:220px}}

@@ -1,0 +1,334 @@
+- generic:
+  - generic:
+    - complementary:
+      - link:
+        - /url: "#dashboard"
+        - generic:
+          - strong: CSELL
+          - generic: TRADE JOURNAL
+      - generic: ÇALIŞMA ALANI
+      - navigation:
+        - button:
+          - generic: ◫
+          - generic: Genel bakış
+        - button:
+          - generic: ▤
+          - generic: Geçmiş kayıtlar
+          - generic: "0"
+        - button:
+          - generic: ▥
+          - generic: Raporlar
+      - generic: YÖNETİM
+      - navigation:
+        - button:
+          - generic: ⚙
+          - generic: Ayarlar
+      - generic:
+        - generic:
+          - generic:
+            - generic: ✳
+            - generic: Bağımsız geliştirildi
+          - paragraph: CSELL ücretsiz. Geliştirmeyi desteklemek istersen Steam'den katkıda bulunabilirsin.
+          - link:
+            - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7
+            - text: Steam'den destek ol
+            - generic: ↗
+        - generic:
+          - generic: C
+          - generic:
+            - strong: Yerel profil
+            - generic: Veriler bu cihazda saklanır
+    - main:
+      - generic:
+        - generic:
+          - generic: Çalışma alanı
+          - generic: /
+          - strong: Genel bakış
+        - generic:
+          - generic: Katalog güncel
+          - button:
+            - generic: ＋
+            - text: Yeni kayıt
+      - generic:
+        - region:
+          - generic:
+            - generic:
+              - generic: KİŞİSEL TRADE DEFTERİN
+              - heading [level=1]: Hoş geldin, trader.
+              - paragraph: Alışlarını kaydet. Kilitleri takip et. Gerçek kârını gör.
+            - generic:
+              - generic: ◷
+              - generic: 8 Kasım 2026 Pazar
+          - generic:
+            - article:
+              - generic:
+                - generic: Net gerçekleşen kâr
+                - generic: ↗
+              - generic: $0.00
+              - generic: Satılmış işlemlerden
+            - article:
+              - generic:
+                - generic: Bu ayın kârı
+                - generic: ◷
+              - generic: $0.00
+              - generic:
+                - generic: 0 satış
+                - generic: ·
+                - generic: Kasım
+            - article:
+              - generic:
+                - generic: Aktif alış maliyeti
+                - generic: ◈
+              - generic: $0.00
+              - generic:
+                - generic: 0 aktif kayıt
+                - generic: ·
+                - generic: kilitte veya beklemede
+            - article:
+              - generic:
+                - generic: Planlanan net kâr
+                - generic: ◎
+              - generic: $0.00
+              - generic: Tahmini satışlardan
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic: PERFORMANS
+                  - heading [level=2]: Kâr grafiği
+                - generic:
+                  - generic:
+                    - generic: Gerçekleşen
+                    - generic: Tahmini
+                  - combobox
+              - generic:
+                - strong: $0.00
+                - generic: son 30 gün
+                - generic: —
+              - img:
+                - generic: İlk satışını kaydettiğinde kâr eğrin burada görünecek.
+            - generic:
+              - generic:
+                - generic:
+                  - generic: TRADE KORUMASI
+                  - heading [level=2]: Yakında açılacaklar
+                - generic: ◷
+              - generic: Aktif trade kilidi bulunmuyor.
+              - button:
+                - text: Tüm aktif kayıtları gör
+                - generic: →
+          - generic:
+            - generic:
+              - generic:
+                - generic: SON HAREKETLER
+                - heading [level=2]: İşlem geçmişi
+              - button:
+                - text: Tüm kayıtlar
+                - generic: →
+            - generic:
+              - generic: ＋
+              - heading [level=3]: İlk alışını kaydet
+              - paragraph: Bir item seç, alış ve tahmini satış fiyatını gir. Komisyon sonrası kârını CSELL hesaplasın.
+              - button:
+                - text: İlk kaydı oluştur
+                - generic: →
+          - generic:
+            - generic: ◈
+            - text: Kayıtların sadece bu tarayıcıda saklanır. Hesap açman gerekmez.
+      - generic:
+        - generic: © 2026 CSELL
+        - generic: Bağımsız topluluk projesi · Steam, Valve veya CSFloat ile bağlantılı değildir.
+        - link:
+          - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7
+          - text: Geliştiriciyi destekle ↗
+  - dialog [ref=f1e157]:
+    - generic [ref=f1e158]:
+      - generic [ref=f1e159]:
+        - generic [ref=f1e160]:
+          - generic [ref=f1e161]: ALIŞ KAYDI
+          - heading "Yeni işlem oluştur" [level=2] [ref=f1e163]
+        - button "Pencereyi kapat" [ref=f1e164] [cursor=pointer]: ×
+      - generic [ref=f1e165]:
+        - generic [ref=f1e166]:
+          - generic [ref=f1e167]:
+            - generic [ref=f1e168]: "01"
+            - generic [ref=f1e169]:
+              - strong [ref=f1e170]: Aldığın ürünü seç
+              - generic [ref=f1e171]: Skin, kasa, ajan veya CS2'deki diğer itemler
+          - generic [ref=f1e172]:
+            - button "Skin" [ref=f1e173] [cursor=pointer]
+            - button "Cases & capsules" [ref=f1e174] [cursor=pointer]
+            - button "Agent" [ref=f1e175] [cursor=pointer]
+            - button "Sticker" [ref=f1e176] [cursor=pointer]
+            - button "Sticker Slab" [ref=f1e177] [cursor=pointer]
+            - button "Charm" [ref=f1e178] [cursor=pointer]
+            - button "Music Kit" [ref=f1e179] [cursor=pointer]
+            - button "Patch" [ref=f1e180] [cursor=pointer]
+            - button "Graffiti" [ref=f1e181] [cursor=pointer]
+            - button "Collectible" [ref=f1e182] [cursor=pointer]
+            - button "Case Key" [ref=f1e183] [cursor=pointer]
+          - generic [ref=f1e184]:
+            - generic [ref=f1e185]:
+              - generic [ref=f1e186]: Skin ara
+              - generic [ref=f1e187]:
+                - generic [ref=f1e188]: ⌕
+                - searchbox "Skin ara ⌕" [active] [ref=f1e189]: M4A4 | Desolate Space
+            - listbox "Ürün arama sonuçları" [ref=f1e285]:
+              - option [ref=f1e286] [cursor=pointer]:
+                - generic [ref=f1e288]:
+                  - strong [ref=f1e289]: M4A4 | Desolate Space (Factory New)
+                  - generic [ref=f1e290]: Classified
+              - option [ref=f1e292] [cursor=pointer]:
+                - generic [ref=f1e294]:
+                  - strong [ref=f1e295]: M4A4 | Desolate Space (Minimal Wear)
+                  - generic [ref=f1e296]: Classified
+              - option [ref=f1e298] [cursor=pointer]:
+                - generic [ref=f1e300]:
+                  - strong [ref=f1e301]: M4A4 | Desolate Space (Field-Tested)
+                  - generic [ref=f1e302]: Classified
+              - option [ref=f1e304] [cursor=pointer]:
+                - generic [ref=f1e306]:
+                  - strong [ref=f1e307]: M4A4 | Desolate Space (Well-Worn)
+                  - generic [ref=f1e308]: Classified
+              - option [ref=f1e310] [cursor=pointer]:
+                - generic [ref=f1e312]:
+                  - strong [ref=f1e313]: M4A4 | Desolate Space (Battle-Scarred)
+                  - generic [ref=f1e314]: Classified
+              - option [ref=f1e316] [cursor=pointer]:
+                - generic [ref=f1e318]:
+                  - strong [ref=f1e319]: StatTrak™ M4A4 | Desolate Space (Factory New)
+                  - generic [ref=f1e320]: Classified
+              - option [ref=f1e322] [cursor=pointer]:
+                - generic [ref=f1e324]:
+                  - strong [ref=f1e325]: StatTrak™ M4A4 | Desolate Space (Minimal Wear)
+                  - generic [ref=f1e326]: Classified
+              - option [ref=f1e328] [cursor=pointer]:
+                - generic [ref=f1e330]:
+                  - strong [ref=f1e331]: StatTrak™ M4A4 | Desolate Space (Field-Tested)
+                  - generic [ref=f1e332]: Classified
+              - option [ref=f1e334] [cursor=pointer]:
+                - generic [ref=f1e336]:
+                  - strong [ref=f1e337]: StatTrak™ M4A4 | Desolate Space (Well-Worn)
+                  - generic [ref=f1e338]: Classified
+              - option [ref=f1e340] [cursor=pointer]:
+                - generic [ref=f1e342]:
+                  - strong [ref=f1e343]: StatTrak™ M4A4 | Desolate Space (Battle-Scarred)
+                  - generic [ref=f1e344]: Classified
+              - option [ref=f1e346] [cursor=pointer]:
+                - generic [ref=f1e348]:
+                  - strong [ref=f1e349]: Souvenir M4A4 | Desolate Space (Factory New)
+                  - generic [ref=f1e350]: Classified
+              - option [ref=f1e352] [cursor=pointer]:
+                - generic [ref=f1e354]:
+                  - strong [ref=f1e355]: Souvenir M4A4 | Desolate Space (Minimal Wear)
+                  - generic [ref=f1e356]: Classified
+              - option [ref=f1e358] [cursor=pointer]:
+                - generic [ref=f1e360]:
+                  - strong [ref=f1e361]: Souvenir M4A4 | Desolate Space (Field-Tested)
+                  - generic [ref=f1e362]: Classified
+              - option [ref=f1e364] [cursor=pointer]:
+                - generic [ref=f1e366]:
+                  - strong [ref=f1e367]: Souvenir M4A4 | Desolate Space (Well-Worn)
+                  - generic [ref=f1e368]: Classified
+              - option [ref=f1e370] [cursor=pointer]:
+                - generic [ref=f1e372]:
+                  - strong [ref=f1e373]: Souvenir M4A4 | Desolate Space (Battle-Scarred)
+                  - generic [ref=f1e374]: Classified
+            - generic [ref=f1e190] [cursor=pointer]:
+              - checkbox "Listede yok, ürün adını kendim yazacağım" [ref=f1e191]
+              - generic [ref=f1e192]: Listede yok, ürün adını kendim yazacağım
+        - generic [ref=f1e193]:
+          - generic [ref=f1e194]:
+            - generic [ref=f1e195]: "02"
+            - generic [ref=f1e196]:
+              - strong [ref=f1e197]: Beraberinde aldıkların
+              - generic [ref=f1e198]: Her itemi ayrı seç; satışta komisyon her satıra uygulanır.
+          - generic [ref=f1e199]:
+            - article [ref=f1e200]:
+              - generic [ref=f1e201]:
+                - generic [ref=f1e202]: ◇
+                - generic [ref=f1e203]:
+                  - strong [ref=f1e204]: Charm
+                  - generic [ref=f1e205]: Silahla birlikte geldiyse ekle
+                - generic [ref=f1e206] [cursor=pointer]:
+                  - checkbox
+            - article [ref=f1e208]:
+              - generic [ref=f1e209]:
+                - generic [ref=f1e210]: ▧
+                - generic [ref=f1e211]:
+                  - strong [ref=f1e212]: Sticker Slab
+                  - generic [ref=f1e213]: İçindeki stickerı seç
+                - generic [ref=f1e214] [cursor=pointer]:
+                  - checkbox
+          - button "＋ Başka bir item daha ekle" [ref=f1e216] [cursor=pointer]
+        - generic [ref=f1e217]:
+          - generic [ref=f1e218]:
+            - generic [ref=f1e219]: "03"
+            - generic [ref=f1e220]:
+              - strong [ref=f1e221]: Alış ve satış bilgileri
+              - generic [ref=f1e222]: Beklenen fiyatları gir; net tutarlar anında hesaplansın.
+          - generic [ref=f1e223]:
+            - generic [ref=f1e224]:
+              - generic [ref=f1e225]: Toplam alış maliyeti *
+              - generic [ref=f1e226]:
+                - generic [ref=f1e227]: $
+                - spinbutton "Toplam alış maliyeti * $" [ref=f1e228]
+            - generic [ref=f1e229]:
+              - generic [ref=f1e230]: Ana itemin satış fiyatı
+              - generic [ref=f1e231]:
+                - generic [ref=f1e232]: $
+                - spinbutton "Ana itemin satış fiyatı $" [ref=f1e233]
+          - generic [ref=f1e235]:
+            - generic [ref=f1e236]: Toplam net satış (%2 komisyon sonrası)
+            - strong [ref=f1e237]: $0.00
+          - generic [ref=f1e238]:
+            - generic [ref=f1e239]: ÖRNEK HESAP
+            - paragraph [ref=f1e240]:
+              - text: $12.50 skin + $0.32 slab satışı → komisyon sonrası $12.25 + $0.31. $11.90 alış maliyetinden sonra
+              - strong [ref=f1e241]: +$0.66 net kâr.
+        - generic [ref=f1e242]:
+          - generic [ref=f1e243]:
+            - generic [ref=f1e244]: "04"
+            - generic [ref=f1e245]:
+              - strong [ref=f1e246]: Alış zamanı ve trade kilidi
+              - generic [ref=f1e247]: Kilit açılışı alış anından tam 7 × 24 saat sonra hesaplanır.
+          - generic [ref=f1e248]:
+            - generic [ref=f1e249]:
+              - generic [ref=f1e250]: Alış tarihi ve saati
+              - textbox "Alış tarihi ve saati" [ref=f1e251]: 2026-11-08T12:34
+            - generic [ref=f1e252]:
+              - generic [ref=f1e253]: Kilit süresi
+              - generic [ref=f1e254]:
+                - spinbutton "Kilit süresi gün" [ref=f1e255]: "7"
+                - generic [ref=f1e256]: gün
+          - generic [ref=f1e257]:
+            - generic [ref=f1e258]: ◷
+            - generic [ref=f1e259]:
+              - generic [ref=f1e260]: TAHMİNİ TRADE AÇILIŞI
+              - strong [ref=f1e261]: 15.11.2026 12:34
+            - generic [ref=f1e262]: alıştan itibaren
+        - generic [ref=f1e263]:
+          - generic [ref=f1e264]:
+            - generic [ref=f1e265]: ✓
+            - generic [ref=f1e266]:
+              - strong [ref=f1e267]: Gerçek satış sonucu
+              - generic [ref=f1e268]: Ürünleri sattıysan gerçekleşen fiyatları kaydet.
+          - generic [ref=f1e269]:
+            - checkbox "Bu işlemi satıldı olarak işaretle" [ref=f1e270]
+            - generic [ref=f1e271]: Bu işlemi satıldı olarak işaretle
+        - generic [ref=f1e272]:
+          - generic [ref=f1e273]:
+            - text: Not
+            - emphasis [ref=f1e274]: isteğe bağlı
+          - textbox "Not isteğe bağlı" [ref=f1e275]:
+            - /placeholder: Float, pattern, satın aldığın pazar yeri veya başka bir not…
+      - generic [ref=f1e276]:
+        - generic [ref=f1e277]:
+          - generic [ref=f1e278]: Komisyon sonrası tahmini kâr
+          - strong [ref=f1e279]: $0.00
+          - generic [ref=f1e280]: Satış fiyatlarını girince hesaplanır
+        - generic [ref=f1e281]:
+          - button "Vazgeç" [ref=f1e282] [cursor=pointer]
+          - button "Kaydı oluştur →" [ref=f1e283] [cursor=pointer]:
+            - text: Kaydı oluştur
+            - generic [ref=f1e284]: →

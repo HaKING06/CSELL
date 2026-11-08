@@ -1,0 +1,128 @@
+- generic [ref=f1e2]:
+  - complementary "Ana menü" [ref=f1e3]:
+    - link "CSELL ana sayfa" [ref=f1e4] [cursor=pointer]:
+      - /url: "#dashboard"
+      - generic [ref=f1e5]:
+        - strong [ref=f1e6]: CSELL
+        - generic [ref=f1e7]: TRADE JOURNAL
+    - generic [ref=f1e8]: ÇALIŞMA ALANI
+    - navigation [ref=f1e9]:
+      - button "◫ Genel bakış" [ref=f1e10] [cursor=pointer]:
+        - generic [ref=f1e11]: ◫
+        - generic [ref=f1e12]: Genel bakış
+      - button "▤ Geçmiş kayıtlar 0" [active] [ref=f1e13] [cursor=pointer]:
+        - generic [ref=f1e14]: ▤
+        - generic [ref=f1e15]: Geçmiş kayıtlar
+        - generic [ref=f1e16]: "0"
+      - button "▥ Raporlar" [ref=f1e17] [cursor=pointer]:
+        - generic [ref=f1e18]: ▥
+        - generic [ref=f1e19]: Raporlar
+    - generic [ref=f1e21]: YÖNETİM
+    - navigation [ref=f1e22]:
+      - button "⚙ Ayarlar" [ref=f1e23] [cursor=pointer]:
+        - generic [ref=f1e24]: ⚙
+        - generic [ref=f1e25]: Ayarlar
+    - generic [ref=f1e26]:
+      - generic [ref=f1e27]:
+        - generic [ref=f1e28]:
+          - generic [ref=f1e29]: ✳
+          - generic [ref=f1e30]: Bağımsız geliştirildi
+        - paragraph [ref=f1e31]: CSELL ücretsiz. Geliştirmeyi desteklemek istersen Steam'den katkıda bulunabilirsin.
+        - link "Steam'den destek ol ↗" [ref=f1e32] [cursor=pointer]:
+          - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7
+          - text: Steam'den destek ol
+          - generic [ref=f1e33]: ↗
+      - generic [ref=f1e34]:
+        - generic [ref=f1e35]: C
+        - generic [ref=f1e36]:
+          - strong [ref=f1e37]: Yerel profil
+          - generic [ref=f1e38]: Veriler bu cihazda saklanır
+  - main [ref=f1e40]:
+    - generic [ref=f1e41]:
+      - generic [ref=f1e42]:
+        - generic [ref=f1e43]: Çalışma alanı
+        - generic [ref=f1e44]: /
+        - strong [ref=f1e45]: Geçmiş kayıtlar
+      - generic [ref=f1e46]:
+        - generic [ref=f1e47]: Katalog güncel
+        - button "＋ Yeni kayıt" [ref=f1e50] [cursor=pointer]:
+          - generic [ref=f1e51]: ＋
+          - text: Yeni kayıt
+    - region [ref=f1e389]:
+      - generic [ref=f1e390]:
+        - generic [ref=f1e391]:
+          - generic [ref=f1e392]: TÜM HAREKETLER
+          - heading "İşlem geçmişi" [level=1] [ref=f1e394]
+          - paragraph [ref=f1e395]: Alışlarını ara, filtrele ve dışa aktar.
+        - button "＋ Yeni kayıt" [ref=f1e396] [cursor=pointer]:
+          - generic [ref=f1e397]: ＋
+          - text: Yeni kayıt
+      - generic [ref=f1e398]:
+        - generic [ref=f1e399]:
+          - text: Toplam kayıt
+          - strong [ref=f1e400]: "0"
+        - generic [ref=f1e401]:
+          - text: Aktif
+          - strong [ref=f1e402]: "0"
+        - generic [ref=f1e403]:
+          - text: Satıldı
+          - strong [ref=f1e404]: "0"
+        - generic [ref=f1e405]:
+          - text: Gerçekleşen kâr
+          - strong [ref=f1e406]: $0.00
+      - generic [ref=f1e407]:
+        - generic [ref=f1e408]:
+          - generic [ref=f1e409]:
+            - generic [ref=f1e410]: ⌕
+            - searchbox "⌕" [ref=f1e411]
+          - combobox "Duruma göre filtrele" [ref=f1e412]:
+            - option "Tüm durumlar" [selected]
+            - option "Aktif"
+            - option "Satıldı"
+          - combobox "Ürün türüne göre filtrele" [ref=f1e413]:
+            - option "Tüm kategoriler" [selected]
+            - option "Skin"
+            - option "Kasa & kapsül"
+            - option "Ajan"
+            - option "Charm"
+            - option "Sticker Slab"
+            - option "Sticker"
+            - option "Müzik kiti"
+            - option "Diğer"
+          - combobox "Wear durumuna göre filtrele" [ref=f1e414]:
+            - option "Tüm wearler" [selected]
+            - option "Factory New"
+            - option "Minimal Wear"
+            - option "Field-Tested"
+            - option "Well-Worn"
+            - option "Battle-Scarred"
+          - combobox "Sıralama" [ref=f1e415]:
+            - option "En yeni" [selected]
+            - option "En eski"
+            - option "En yüksek kâr"
+            - option "En düşük kâr"
+            - option "En yüksek maliyet"
+          - generic [ref=f1e416]:
+            - generic [ref=f1e417]: Başlangıç
+            - textbox "Başlangıç tarihi" [ref=f1e418]
+          - generic [ref=f1e419]:
+            - generic [ref=f1e420]: Bitiş
+            - textbox "Bitiş tarihi" [ref=f1e421]
+          - button "↧ CSV" [ref=f1e422] [cursor=pointer]:
+            - generic [ref=f1e423]: ↧
+            - text: CSV
+        - generic [ref=f1e424]:
+          - generic [ref=f1e425]: ⌕
+          - heading "Bu filtreye uygun kayıt yok" [level=3] [ref=f1e427]
+          - paragraph [ref=f1e428]: Filtreleri temizle ya da yeni bir işlem ekle.
+          - button "Filtreleri temizle" [ref=f1e429] [cursor=pointer]
+        - generic [ref=f1e430]:
+          - generic [ref=f1e431]: 0 / 0 kayıt
+          - generic [ref=f1e432]:
+            - text: Yerel geçmiş ·
+            - button "JSON yedeği al" [ref=f1e433] [cursor=pointer]
+    - generic [ref=f1e153]:
+      - generic [ref=f1e154]: © 2026 CSELL
+      - generic [ref=f1e155]: Bağımsız topluluk projesi · Steam, Valve veya CSFloat ile bağlantılı değildir.
+      - link "Geliştiriciyi destekle ↗" [ref=f1e156] [cursor=pointer]:
+        - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7

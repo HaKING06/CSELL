@@ -1,0 +1,101 @@
+- generic [ref=f1e2]:
+  - complementary "Ana menü" [ref=f1e3]:
+    - link "CSELL ana sayfa" [ref=f1e4] [cursor=pointer]:
+      - /url: "#dashboard"
+      - generic [ref=f1e5]:
+        - strong [ref=f1e6]: CSELL
+        - generic [ref=f1e7]: TRADE JOURNAL
+    - generic [ref=f1e8]: ÇALIŞMA ALANI
+    - navigation [ref=f1e9]:
+      - button "◫ Genel bakış" [ref=f1e10] [cursor=pointer]:
+        - generic [ref=f1e11]: ◫
+        - generic [ref=f1e12]: Genel bakış
+      - button "▤ Geçmiş kayıtlar 0" [ref=f1e13] [cursor=pointer]:
+        - generic [ref=f1e14]: ▤
+        - generic [ref=f1e15]: Geçmiş kayıtlar
+        - generic [ref=f1e16]: "0"
+      - button "▥ Raporlar" [active] [ref=f1e17] [cursor=pointer]:
+        - generic [ref=f1e18]: ▥
+        - generic [ref=f1e19]: Raporlar
+    - generic [ref=f1e21]: YÖNETİM
+    - navigation [ref=f1e22]:
+      - button "⚙ Ayarlar" [ref=f1e23] [cursor=pointer]:
+        - generic [ref=f1e24]: ⚙
+        - generic [ref=f1e25]: Ayarlar
+    - generic [ref=f1e26]:
+      - generic [ref=f1e27]:
+        - generic [ref=f1e28]:
+          - generic [ref=f1e29]: ✳
+          - generic [ref=f1e30]: Bağımsız geliştirildi
+        - paragraph [ref=f1e31]: CSELL ücretsiz. Geliştirmeyi desteklemek istersen Steam'den katkıda bulunabilirsin.
+        - link "Steam'den destek ol ↗" [ref=f1e32] [cursor=pointer]:
+          - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7
+          - text: Steam'den destek ol
+          - generic [ref=f1e33]: ↗
+      - generic [ref=f1e34]:
+        - generic [ref=f1e35]: C
+        - generic [ref=f1e36]:
+          - strong [ref=f1e37]: Yerel profil
+          - generic [ref=f1e38]: Veriler bu cihazda saklanır
+  - main [ref=f1e40]:
+    - generic [ref=f1e41]:
+      - generic [ref=f1e42]:
+        - generic [ref=f1e43]: Çalışma alanı
+        - generic [ref=f1e44]: /
+        - strong [ref=f1e45]: Raporlar
+      - generic [ref=f1e46]:
+        - generic [ref=f1e47]: Katalog güncel
+        - button "＋ Yeni kayıt" [ref=f1e50] [cursor=pointer]:
+          - generic [ref=f1e51]: ＋
+          - text: Yeni kayıt
+    - region [ref=f1e434]:
+      - generic [ref=f1e435]:
+        - generic [ref=f1e436]:
+          - generic [ref=f1e437]: PERFORMANS ANALİZİ
+          - heading "Raporlar" [level=1] [ref=f1e439]
+          - paragraph [ref=f1e440]: Gerçekleşen sonuçları ve açık pozisyonları birlikte incele.
+        - generic [ref=f1e441]:
+          - text: Dönem
+          - combobox "Dönem" [ref=f1e442]:
+            - option "Bu ay" [selected]
+            - option "Geçen ay"
+            - option "Bu yıl"
+            - option "Tüm zamanlar"
+      - generic [ref=f1e443]:
+        - article [ref=f1e444]:
+          - text: Gerçekleşen kâr
+          - strong [ref=f1e445]: $0.00
+          - text: 0 tamamlanan satış
+        - article [ref=f1e446]:
+          - text: Tahmini açık kâr
+          - strong [ref=f1e447]: $0.00
+          - text: 0 aktif işlem
+        - article [ref=f1e448]:
+          - text: Satış geliri
+          - strong [ref=f1e449]: $0.00
+          - text: komisyon sonrası
+        - article [ref=f1e450]:
+          - text: Yatırılan tutar
+          - strong [ref=f1e451]: $0.00
+          - text: 0 toplam işlem
+      - generic [ref=f1e452]:
+        - generic [ref=f1e453]:
+          - generic [ref=f1e455]:
+            - generic [ref=f1e456]: AYLIK ÖZET
+            - heading "Aylara göre gerçekleşen kâr" [level=2] [ref=f1e457]
+          - generic [ref=f1e458]: İşlem kayıtların oluştukça rapor burada görünür.
+        - generic [ref=f1e460]:
+          - generic [ref=f1e462]:
+            - generic [ref=f1e463]: DAĞILIM
+            - heading "Kategori performansı" [level=2] [ref=f1e464]
+          - generic [ref=f1e465]: Satış kaydı bulunmuyor.
+      - generic [ref=f1e467]:
+        - generic [ref=f1e469]:
+          - generic [ref=f1e470]: EN ÇOK İŞLEM GÖREN
+          - heading "Öne çıkan itemler" [level=2] [ref=f1e471]
+        - paragraph [ref=f1e473]: Rapor oluşturmak için işlem geçmişine kayıt ekle.
+    - generic [ref=f1e153]:
+      - generic [ref=f1e154]: © 2026 CSELL
+      - generic [ref=f1e155]: Bağımsız topluluk projesi · Steam, Valve veya CSFloat ile bağlantılı değildir.
+      - link "Geliştiriciyi destekle ↗" [ref=f1e156] [cursor=pointer]:
+        - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7

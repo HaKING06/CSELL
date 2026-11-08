@@ -1,0 +1,145 @@
+- generic [ref=f1e2]:
+  - complementary "Ana menü" [ref=f1e3]:
+    - link "CSELL ana sayfa" [ref=f1e4] [cursor=pointer]:
+      - /url: "#dashboard"
+      - generic [ref=f1e5]:
+        - strong [ref=f1e6]: CSELL
+        - generic [ref=f1e7]: TRADE JOURNAL
+    - generic [ref=f1e8]: ÇALIŞMA ALANI
+    - navigation [ref=f1e9]:
+      - button "◫ Genel bakış" [ref=f1e10] [cursor=pointer]:
+        - generic [ref=f1e11]: ◫
+        - generic [ref=f1e12]: Genel bakış
+      - button "▤ Geçmiş kayıtlar 0" [ref=f1e13] [cursor=pointer]:
+        - generic [ref=f1e14]: ▤
+        - generic [ref=f1e15]: Geçmiş kayıtlar
+        - generic [ref=f1e16]: "0"
+      - button "▥ Raporlar" [ref=f1e17] [cursor=pointer]:
+        - generic [ref=f1e18]: ▥
+        - generic [ref=f1e19]: Raporlar
+    - generic [ref=f1e21]: YÖNETİM
+    - navigation [ref=f1e22]:
+      - button "⚙ Ayarlar" [active] [ref=f1e23] [cursor=pointer]:
+        - generic [ref=f1e24]: ⚙
+        - generic [ref=f1e25]: Ayarlar
+    - generic [ref=f1e26]:
+      - generic [ref=f1e27]:
+        - generic [ref=f1e28]:
+          - generic [ref=f1e29]: ✳
+          - generic [ref=f1e30]: Bağımsız geliştirildi
+        - paragraph [ref=f1e31]: CSELL ücretsiz. Geliştirmeyi desteklemek istersen Steam'den katkıda bulunabilirsin.
+        - link "Steam'den destek ol ↗" [ref=f1e32] [cursor=pointer]:
+          - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7
+          - text: Steam'den destek ol
+          - generic [ref=f1e33]: ↗
+      - generic [ref=f1e34]:
+        - generic [ref=f1e35]: C
+        - generic [ref=f1e36]:
+          - strong [ref=f1e37]: Yerel profil
+          - generic [ref=f1e38]: Veriler bu cihazda saklanır
+  - main [ref=f1e40]:
+    - generic [ref=f1e41]:
+      - generic [ref=f1e42]:
+        - generic [ref=f1e43]: Çalışma alanı
+        - generic [ref=f1e44]: /
+        - strong [ref=f1e45]: Ayarlar
+      - generic [ref=f1e46]:
+        - generic [ref=f1e47]: Katalog güncel
+        - button "＋ Yeni kayıt" [ref=f1e50] [cursor=pointer]:
+          - generic [ref=f1e51]: ＋
+          - text: Yeni kayıt
+    - region [ref=f1e474]:
+      - generic [ref=f1e475]: TERCİHLER
+      - heading "Ayarlar" [level=1] [ref=f1e477]
+      - paragraph [ref=f1e478]: Hesaplamaları ve yerel verilerini yönet.
+      - generic [ref=f1e479]:
+        - generic [ref=f1e480]:
+          - generic [ref=f1e481]:
+            - generic [ref=f1e482]: 文
+            - generic [ref=f1e483]:
+              - heading "Site dili" [level=2] [ref=f1e484]
+              - paragraph [ref=f1e485]: İlk açılışta tarayıcının dilini kullanır; bu menüden istediğin zaman değiştirebilirsin.
+          - generic [ref=f1e486]:
+            - generic [ref=f1e487]: Arayüz dili
+            - combobox "Arayüz dili Tercihin bu tarayıcıda saklanır." [ref=f1e488]:
+              - option "English"
+              - option "Türkçe" [selected]
+            - generic [ref=f1e489]: Tercihin bu tarayıcıda saklanır.
+        - generic [ref=f1e490]:
+          - generic [ref=f1e491]:
+            - generic [ref=f1e492]: ％
+            - generic [ref=f1e493]:
+              - heading "Satış komisyonu" [level=2] [ref=f1e494]
+              - paragraph [ref=f1e495]: Her bir itemin satış fiyatına ayrı uygulanır.
+          - generic [ref=f1e496]:
+            - generic [ref=f1e497]:
+              - generic [ref=f1e498]: Komisyon oranı
+              - generic [ref=f1e499]:
+                - spinbutton "Komisyon oranı % Varsayılan %2; ücret cent seviyesinde yukarı yuvarlanır." [ref=f1e500]: "2"
+                - generic [ref=f1e501]: "%"
+              - generic [ref=f1e502]: Varsayılan %2; ücret cent seviyesinde yukarı yuvarlanır.
+            - generic [ref=f1e503]:
+              - generic [ref=f1e504]: İşlem başına ek kesinti
+              - generic [ref=f1e505]:
+                - generic [ref=f1e506]: $
+                - spinbutton "İşlem başına ek kesinti $ Her satılan item için sabit bir ücret ekleyebilirsin." [ref=f1e507]: "0.00"
+              - generic [ref=f1e508]: Her satılan item için sabit bir ücret ekleyebilirsin.
+            - generic [ref=f1e509]:
+              - generic [ref=f1e510]: Varsayılan trade kilidi
+              - generic [ref=f1e511]:
+                - spinbutton "Varsayılan trade kilidi gün En fazla 7 gün; alış anından itibaren tam gün olarak hesaplanır." [ref=f1e512]: "7"
+                - generic [ref=f1e513]: gün
+              - generic [ref=f1e514]: En fazla 7 gün; alış anından itibaren tam gün olarak hesaplanır.
+          - button "Ayarları kaydet" [ref=f1e515] [cursor=pointer]
+        - generic [ref=f1e516]:
+          - generic [ref=f1e517]:
+            - generic [ref=f1e518]: ◈
+            - generic [ref=f1e519]:
+              - heading "Verilerin ve yedekler" [level=2] [ref=f1e520]
+              - paragraph [ref=f1e521]: Kayıtlar yalnızca bu tarayıcıdaki yerel veritabanına yazılır.
+          - generic [ref=f1e522]:
+            - button "↧ Yedeği dışa aktar Tüm kayıtların ve ayarların JSON dosyası →" [ref=f1e523] [cursor=pointer]:
+              - generic [ref=f1e524]: ↧
+              - generic [ref=f1e525]:
+                - strong [ref=f1e526]: Yedeği dışa aktar
+                - generic [ref=f1e527]: Tüm kayıtların ve ayarların JSON dosyası
+              - generic [ref=f1e528]: →
+            - generic [ref=f1e529] [cursor=pointer]:
+              - generic [ref=f1e530]: ↥
+              - generic [ref=f1e531]:
+                - strong [ref=f1e532]: Yedekten geri yükle
+                - generic [ref=f1e533]: Önceden dışa aktarılan CSELL JSON dosyası
+              - generic [ref=f1e534]: →
+              - button "↥ Yedekten geri yükle Önceden dışa aktarılan CSELL JSON dosyası →" [ref=f1e535]
+            - button "⌫ Tüm kayıtları sil Bu tarayıcıdaki işlem geçmişi kalıcı olarak silinir →" [ref=f1e536] [cursor=pointer]:
+              - generic [ref=f1e537]: ⌫
+              - generic [ref=f1e538]:
+                - strong [ref=f1e539]: Tüm kayıtları sil
+                - generic [ref=f1e540]: Bu tarayıcıdaki işlem geçmişi kalıcı olarak silinir
+              - generic [ref=f1e541]: →
+        - generic [ref=f1e542]:
+          - generic [ref=f1e543]:
+            - generic [ref=f1e544]: ⓘ
+            - generic [ref=f1e545]:
+              - heading "CSELL hakkında" [level=2] [ref=f1e546]
+              - paragraph [ref=f1e547]: CS2 alış ve satışların için sade, ücretsiz bir takip defteri.
+          - generic [ref=f1e548]:
+            - generic [ref=f1e549]:
+              - generic [ref=f1e550]: SÜRÜM
+              - strong [ref=f1e551]: 1.0.0
+            - generic [ref=f1e552]:
+              - generic [ref=f1e553]: ITEM KATALOĞU
+              - strong [ref=f1e554]: 2 kategori önbelleğe alındı
+            - generic [ref=f1e555]:
+              - generic [ref=f1e556]: KAYITLAR
+              - strong [ref=f1e557]: 0 işlem
+          - paragraph [ref=f1e558]:
+            - text: Ürün isimleri ve görseller,
+            - link "ByMykel/CSGO-API" [ref=f1e559] [cursor=pointer]:
+              - /url: https://github.com/ByMykel/CSGO-API
+            - text: topluluk kataloğundan alınır. CS2 ve tüm ilgili içerikler Valve'ın mülkiyetindedir; CSELL bağımsız bir hayran projesidir.
+    - generic [ref=f1e153]:
+      - generic [ref=f1e154]: © 2026 CSELL
+      - generic [ref=f1e155]: Bağımsız topluluk projesi · Steam, Valve veya CSFloat ile bağlantılı değildir.
+      - link "Geliştiriciyi destekle ↗" [ref=f1e156] [cursor=pointer]:
+        - /url: https://steamcommunity.com/tradeoffer/new/?partner=1800489426&token=jIoKxNd7

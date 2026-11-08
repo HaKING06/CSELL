@@ -1,6 +1,7 @@
 const DB_NAME = 'csell-local-v1';
 const DB_VERSION = 1;
-const MAX_LOCK_DAYS = 7;
+const APP_VERSION = '1.0.1';
+const MAX_LOCK_HOURS = 169;
 const API_ROOT = 'https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en';
 const CATALOG_FILES = {
   skin: 'skins_not_grouped.json', agent: 'agents.json', case: 'crates.json', sticker: 'stickers.json',
@@ -12,7 +13,7 @@ const LABELS = {
   charm:'Charm', music_kit:'Müzik kiti', patch:'Patch', graffiti:'Graffiti', collectible:'Koleksiyon ürünü', key:'Kasa anahtarı', other:'Diğer'
 };
 const PILL_CATEGORIES = ['skin','case','agent','sticker','sticker_slab','charm','music_kit','patch','graffiti','collectible','key'];
-const state = { db:null, trades:[], settings:{ feeRate:2, feeFixed:0, lockDays:7, nextId:1 }, catalog:new Map(), catalogPromises:new Map(), catalogUpdated:new Map(), activePage:'dashboard', editor:{ recordId:null, category:'skin', main:null, charm:null, slab:null, extras:[], selectedItem:null }, detailId:null, filters:{ search:'',status:'all',type:'all',wear:'all',from:'',to:'',sort:'date-desc' } };
+const state = { db:null, trades:[], settings:{ feeRate:2, feeFixed:0, lockHours:168, nextId:1 }, catalog:new Map(), catalogPromises:new Map(), catalogUpdated:new Map(), activePage:'dashboard', queueTab:'ready', readyIdsSeen:new Set(), editor:{ recordId:null, category:'skin', main:null, charm:null, slab:null, extras:[], selectedItem:null }, detailId:null, filters:{ search:'',status:'all',type:'all',wear:'all',from:'',to:'',sort:'date-desc' } };
 const $ = (selector, root=document) => root.querySelector(selector);
 const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
 const locale = () => window.CSELL_I18N?.locale?.() || 'tr-TR';
@@ -46,7 +47,9 @@ function dbRequest(store,method,value){
 }
 const money=(value)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2}).format((Number(value)||0)/100);
 const cents=(value)=>Math.round((Number.parseFloat(value)||0)*100);
-const clampLockDays=(value)=>Math.min(MAX_LOCK_DAYS,Math.max(0,Math.round(Number(value)||0)));
+const clampLockHours=(value)=>Math.min(MAX_LOCK_HOURS,Math.max(0,Math.round(Number(value)||0)));
+const recordLockHours=(record)=>clampLockHours(record.lockHours??((Number(record.lockDays)||0)*24));
+function setLockInputs(daysInput,hoursInput,totalHours){const hours=clampLockHours(totalHours);daysInput.value=Math.floor(hours/24);hoursInput.value=hours%24}
 const feeCents=(gross,settings=state.settings)=>gross>0?Math.max(1,Math.ceil(gross*(Number(settings.feeRate)||0)/100))+Math.round((Number(settings.feeFixed)||0)*100):0;
 const netCents=(gross,settings=state.settings)=>Math.max(0,gross-feeCents(gross,settings));
 const escapeHtml=(value)=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -89,7 +92,7 @@ function totalsFor(record,actual=false){
   const cost=Number(record.buyCents)||0;
   return {gross,net,fees:gross-net,profit:net-cost,lines};
 }
-function unlockAt(record){return new Date(new Date(record.boughtAt).getTime()+Math.max(0,Number(record.lockDays)||0)*86400000)}
+function unlockAt(record){return new Date(new Date(record.boughtAt).getTime()+recordLockHours(record)*3600000)}
 function isReady(record,now=Date.now()){return unlockAt(record).getTime()<=now}
 function realizedProfit(record){return record.soldAt?totalsFor(record,true).profit:0}
 function plannedProfit(record){return record.soldAt?0:totalsFor(record,false).profit}
@@ -163,10 +166,12 @@ function renderDashboard(){
   const monthTrades=sold.filter(t=>{const d=new Date(t.soldAt);return d.getMonth()===month&&d.getFullYear()===year});
   const monthProfit=monthTrades.reduce((sum,t)=>sum+realizedProfit(t),0);
   const invested=active.reduce((sum,t)=>sum+(Number(t.buyCents)||0),0);
+  const spent=state.trades.reduce((sum,t)=>sum+(Number(t.buyCents)||0),0);
   const forecast=active.reduce((sum,t)=>sum+plannedProfit(t),0);
   $('#metric-total-profit').textContent=money(total);$('#metric-month-profit').textContent=money(monthProfit);
-  $('#metric-invested').textContent=money(invested);$('#metric-forecast').textContent=money(forecast);
+  $('#metric-invested').textContent=money(invested);$('#metric-total-spent').textContent=money(spent);$('#metric-forecast').textContent=money(forecast);
   $('#month-trades').textContent=`${monthTrades.length} satış`;
+  $('#spent-count').textContent=`${state.trades.length} alış`;
   $('#month-label').textContent=new Intl.DateTimeFormat(locale(),{month:'long'}).format(now);
   $('#active-count').textContent=`${active.length} aktif kayıt`;
   $('#today-label').textContent=new Intl.DateTimeFormat(locale(),{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(now);
@@ -180,7 +185,9 @@ function renderDashboard(){
   }).join('');
   $('#dashboard-empty').hidden=state.trades.length!==0;
   $('#recent-body').closest('.table-wrap').hidden=state.trades.length===0;
-  renderUnlockList();renderProfitChart();updateImageFallbacks();
+  const readyIds=new Set(state.trades.filter(t=>!t.soldAt&&isReady(t)).map(t=>t.id));
+  if([...readyIds].some(id=>!state.readyIdsSeen.has(id)))state.queueTab='ready';state.readyIdsSeen=readyIds;
+  renderTradeQueue();renderProfitChart();updateImageFallbacks();
 }
 function countdown(target){
   const ms=new Date(target).getTime()-Date.now();if(ms<=0)return 'Açıldı';
@@ -188,14 +195,23 @@ function countdown(target){
   if(window.CSELL_LANGUAGE==='en')return d>0?`${d}d ${String(h).padStart(2,'0')}h`:`${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m`;
   return d>0?`${d}g ${String(h).padStart(2,'0')}s`:`${String(h).padStart(2,'0')}s ${String(m).padStart(2,'0')}d`;
 }
-function renderUnlockList(){
-  const items=state.trades.filter(t=>!t.soldAt&&!isReady(t)).sort((a,b)=>unlockAt(a)-unlockAt(b)).slice(0,4);
-  const container=$('#unlock-list');
-  if(!items.length){container.innerHTML='<div class="empty-unlocks">Aktif trade kilidi bulunmuyor.</div>';return}
-  container.innerHTML=items.map(record=>{
-    const item=recordMainItem(record),image=itemImage(item),date=unlockAt(record);
-    return `<div class="unlock-item"><span class="unlock-thumb">${image?`<img loading="lazy" src="${escapeHtml(image)}" alt="">`:'◈'}</span><span class="unlock-item-copy"><strong>${escapeHtml(itemName(item))}</strong><small>${escapeHtml(shortDate(date))} · ${escapeHtml(new Intl.DateTimeFormat(locale(),{hour:'2-digit',minute:'2-digit'}).format(date))}</small></span><span class="unlock-countdown" data-countdown="${escapeHtml(date.toISOString())}">${escapeHtml(countdown(date))}<small>kaldı</small></span></div>`
-  }).join('');updateImageFallbacks(container);
+function renderTradeQueue(){
+  const ready=state.trades.filter(t=>!t.soldAt&&isReady(t)).sort((a,b)=>unlockAt(b)-unlockAt(a));
+  const locked=state.trades.filter(t=>!t.soldAt&&!isReady(t)).sort((a,b)=>unlockAt(a)-unlockAt(b));
+  $('#ready-count').textContent=String(ready.length);$('#locked-count').textContent=String(locked.length);
+  if(!ready.length&&locked.length)state.queueTab='locked';else if(!locked.length&&ready.length)state.queueTab='ready';
+  $$('.queue-tab').forEach(button=>{const active=button.dataset.queueTab===state.queueTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active))});
+  const isReadyTab=state.queueTab==='ready',items=(isReadyTab?ready:locked).slice(0,4),container=$('#unlock-list');
+  $('#queue-title').textContent=isReadyTab?'Satışa hazır':'Yakında açılacaklar';
+  if(!items.length){container.innerHTML=`<div class="empty-unlocks">${isReadyTab?'Satışa hazır kayıt bulunmuyor.':'Aktif trade kilidi bulunmuyor.'}</div>`}
+  else container.innerHTML=items.map(record=>{
+    const item=recordMainItem(record),image=itemImage(item),date=unlockAt(record),profit=plannedProfit(record);
+    const secondary=isReadyTab?(window.CSELL_LANGUAGE==='en'?`Cost ${money(record.buyCents)} · Target ${money(profit)}`:`Alış ${money(record.buyCents)} · Hedef ${money(profit)}`):`${escapeHtml(shortDate(date))} · ${escapeHtml(new Intl.DateTimeFormat(locale(),{hour:'2-digit',minute:'2-digit'}).format(date))}`;
+    const status=isReadyTab?(window.CSELL_LANGUAGE==='en'?'Ready to sell':'Satışa hazır'):`${escapeHtml(countdown(date))}<small>${window.CSELL_LANGUAGE==='en'?'left':'kaldı'}</small>`;
+    return `<button type="button" class="unlock-item" data-action="detail" data-id="${escapeHtml(record.id)}"><span class="unlock-thumb">${image?`<img loading="lazy" src="${escapeHtml(image)}" alt="">`:'◈'}</span><span class="unlock-item-copy"><strong>${escapeHtml(itemName(item))}</strong><small>${secondary}</small></span><span class="unlock-countdown${isReadyTab?' is-ready':''}"${isReadyTab?'':` data-countdown="${escapeHtml(date.toISOString())}"`}>${status}</span></button>`
+  }).join('');
+  const link=$('#queue-view-all');link.dataset.historyStatus=isReadyTab?'ready':'locked';link.textContent=isReadyTab?(window.CSELL_LANGUAGE==='en'?'View all ready items →':'Tüm satışa hazırları gör →'):(window.CSELL_LANGUAGE==='en'?'View all locked items →':'Tüm kilitli kayıtları gör →');
+  updateImageFallbacks(container);
 }
 function chartSvg(values,forecastValues=[],labels=[]){
   const width=720,height=132,left=8,right=8,top=7,bottom=20,innerW=width-left-right,innerH=height-top-bottom;
@@ -300,7 +316,7 @@ function historyRows(){
   let records=state.trades.filter(record=>{
     const allItems=[recordMainItem(record),record.charm,record.slab,...(record.extras||[]).map(e=>e.item||e)].filter(Boolean);
     const matchesSearch=!q||record.id.toLocaleLowerCase('tr').includes(q)||allItems.some(item=>itemName(item).toLocaleLowerCase('tr').includes(q));
-    const matchesStatus=state.filters.status==='all'||(state.filters.status==='sold'?!!record.soldAt:!record.soldAt);
+    const matchesStatus=state.filters.status==='all'||(state.filters.status==='sold'?!!record.soldAt:state.filters.status==='ready'?!record.soldAt&&isReady(record):state.filters.status==='locked'?!record.soldAt&&!isReady(record):!record.soldAt);
     const categories=allItems.map(x=>x.category||record.category||'other');
     const matchesType=state.filters.type==='all'||categories.includes(state.filters.type)||(state.filters.type==='other'&&categories.some(c=>!Object.hasOwn(LABELS,c)));
     const matchesWear=state.filters.wear==='all'||allItems.some(item=>itemWear(item)===state.filters.wear);
@@ -354,7 +370,7 @@ function renderReports(){
   $('#report-empty').hidden=items.length>0;$('#item-report-body').closest('.table-wrap').hidden=items.length===0;
 }
 function renderSettings(){
-  $('#setting-fee-rate').value=state.settings.feeRate;$('#setting-fee-fixed').value=(state.settings.feeFixed/100).toFixed(2);$('#setting-lock-days').value=state.settings.lockDays;
+  $('#setting-fee-rate').value=state.settings.feeRate;$('#setting-fee-fixed').value=(state.settings.feeFixed/100).toFixed(2);setLockInputs($('#setting-lock-days'),$('#setting-lock-hours'),state.settings.lockHours);
   $('#setting-language').value=window.CSELL_LANGUAGE==='tr'?'tr':'en';
   $('#settings-record-count').textContent=`${state.trades.length} işlem`;
   const cached=state.catalog.size;$('#settings-catalog-status').textContent=cached?`${cached} kategori önbelleğe alındı`:'İlk kullanımda yüklenir';
@@ -383,11 +399,37 @@ function renderMainResults(){
   if(!state.catalog.has(state.editor.category)){results.innerHTML='<div class="results-empty">Katalog hazırlanıyor…</div>';return}
   renderResults(results,matchingItems(state.editor.category,q),state.editor.category,'main');
 }
+function inferCategoryFromQuery(query,current=state.editor.category){
+  const q=String(query||'').trim().toLocaleLowerCase('tr-TR').normalize('NFKC');if(!q)return current;
+  const has=pattern=>pattern.test(q);
+  if(has(/\b(capsule|capsules|capsül|kapsül)\b/))return 'case';
+  if(has(/\b(case\s*key|keys?|anahtarlar?)\b/))return 'key';
+  if(has(/\b(case|cases|kasa|kasalar|package|paket)\b/))return 'case';
+  if(has(/\b(sticker\s*slab|slab|slablı|slabli)\b/))return 'sticker_slab';
+  if(has(/\b(sticker|stickers|etiket|etiketler)\b/))return 'sticker';
+  if(has(/\b(charm|charms|keychain|keychains|anahtarlık|anahtarlik)\b/))return 'charm';
+  if(has(/\b(agent|agents|ajan|ajanlar)\b/))return 'agent';
+  if(has(/\b(music\s*kit|müzik\s*kiti|muzik\s*kiti)\b/))return 'music_kit';
+  if(has(/\b(patch|patches|yama|yamalar)\b/))return 'patch';
+  if(has(/\b(graffiti|graffitis|grafiti|sprey)\b/))return 'graffiti';
+  if(has(/\b(collectible|collectibles|koleksiyon|collectible\s*pin)\b/))return 'collectible';
+  if(has(/\b(key|keys|anahtar|anahtarlar)\b/))return 'key';
+  return current;
+}
+async function refreshMainResults(){
+  const input=$('#item-search'),query=input.value,category=inferCategoryFromQuery(query);
+  $('#item-results').hidden=false;
+  if(category!==state.editor.category){state.editor.category=category;state.editor.main=null;$('#selected-main').hidden=true;renderCategoryPills();$('#item-picker-label').textContent=itemSearchLabel(category);updateSalePreview()}
+  const requestedCategory=state.editor.category;$('#picker-loading').hidden=false;
+  if(!state.catalog.has(requestedCategory))await ensureCatalog(requestedCategory);
+  $('#picker-loading').hidden=true;
+  if(state.editor.category===requestedCategory&&input.value===query)renderMainResults();
+}
 async function setMainCategory(category){
   state.editor.category=category;state.editor.main=null;state.editor.selectedItem=null;
   $('#item-search').value='';$('#item-results').hidden=true;$('#selected-main').hidden=true;$('#manual-item-toggle').checked=false;$('#manual-fields').hidden=true;$('#manual-name').value='';$('#manual-image').value='';renderCategoryPills();
   $('#item-picker-label').textContent=itemSearchLabel(category);
-  $('#picker-loading').hidden=false;await ensureCatalog(category);$('#picker-loading').hidden=true;renderMainResults();
+  updateSalePreview();$('#picker-loading').hidden=false;await ensureCatalog(category);$('#picker-loading').hidden=true;renderMainResults();
 }
 function selectMainItem(item){
   state.editor.main=item;$('#manual-item-toggle').checked=false;$('#manual-fields').hidden=true;$('#manual-name').value='';$('#manual-image').value='';$('#item-results').innerHTML='';$('#item-results').hidden=true;$('#item-search').value='';
@@ -423,7 +465,12 @@ function updateProfitEstimate(){
   $('#estimate-profit').textContent=money(value);$('#estimate-profit').style.color=value<0?'#e99797':'#bdf191';
   $('#estimate-label').textContent=sold?'Gerçekleşen net kâr':'Komisyon sonrası tahmini kâr';
   const gross=lines.reduce((sum,line)=>sum+(sold?cents($(`[data-actual-price="${CSS.escape(line.key)}"]`)?.value??line.price):line.price),0);
-  const fees=gross-(sold?actual:expected);$('#estimate-detail').textContent=lines.length?`${money(gross)} satış − ${money(fees)} kesinti − ${money(buy)} alış`:'Satış fiyatlarını girince hesaplanır';
+  const net=sold?actual:expected,fees=gross-net,profit=net-buy;
+  $('#estimate-detail').textContent=lines.length?`${money(gross)} satış − ${money(fees)} kesinti − ${money(buy)} alış`:'Satış fiyatlarını girince hesaplanır';
+  $('#profit-target-value').textContent=profit>0?`+${money(profit)}`:money(profit);
+  $('#profit-target-value').classList.toggle('negative',profit<0);
+  $('#profit-target-title').textContent=sold?(window.CSELL_LANGUAGE==='en'?'Realized profit':'Gerçekleşen net kâr'):(window.CSELL_LANGUAGE==='en'?'Live profit target':'Canlı kâr hedefi');
+  $('#profit-target-detail').textContent=lines.length?(window.CSELL_LANGUAGE==='en'?`${money(net)} net proceeds − ${money(buy)} purchase · ${lines.length} item${lines.length===1?'':'s'} · ${state.settings.feeRate}% fee`:`${money(net)} net satış − ${money(buy)} alış · ${lines.length} ürün · %${state.settings.feeRate} komisyon`):(window.CSELL_LANGUAGE==='en'?'Enter sale prices to see the target profit':'Satış fiyatlarını girince hedef kâr burada görünür.');
 }
 function editorLineRows(){
   const rows=[];if(state.editor.main)rows.push({key:'main',name:itemName(state.editor.main),expected:$('#main-sale').value});
@@ -439,14 +486,14 @@ function renderActualPrices(record=null){
   container.querySelectorAll('input').forEach(input=>input.addEventListener('input',updateProfitEstimate));
 }
 function updateUnlockPreview(){
-  const bought=new Date($('#bought-at').value||Date.now()),days=Math.max(0,Number($('#lock-days').value)||0),unlock=new Date(bought.getTime()+days*86400000);
-  $('#lock-info').textContent=window.CSELL_LANGUAGE==='en'?`Trade unlock time is exactly ${days} × 24 hours after purchase.`:`Kilit açılışı alış anından tam ${days} × 24 saat sonra hesaplanır.`;
+  const bought=new Date($('#bought-at').value||Date.now()),hours=clampLockHours((Number($('#lock-days').value)||0)*24+(Number($('#lock-hours').value)||0)),unlock=new Date(bought.getTime()+hours*3600000),days=Math.floor(hours/24),remainingHours=hours%24;
+  $('#lock-info').textContent=window.CSELL_LANGUAGE==='en'?`Unlocks ${days} day${days===1?'':'s'}${remainingHours?` and ${remainingHours} hour${remainingHours===1?'':'s'}`:''} after purchase (max 7 days, 1 hour).`:`Kilit alıştan ${days} gün${remainingHours?` ${remainingHours} saat`:''} sonra açılır (en fazla 7 gün 1 saat).`;
   $('#unlock-preview-date').textContent=localDateTime(unlock);
 }
 function clearEditor(){
   state.editor={recordId:null,category:'skin',main:null,charm:null,slab:null,extras:[],selectedItem:null};
   $('#trade-form').reset();$('#dialog-id').textContent='';$('#dialog-title').textContent='Yeni işlem oluştur';$('#save-trade').innerHTML='Kaydı oluştur <span>→</span>';
-  $('#bought-at').value=localInputValue();$('#lock-days').value=state.settings.lockDays;
+  $('#bought-at').value=localInputValue();setLockInputs($('#lock-days'),$('#lock-hours'),state.settings.lockHours);
   $('#has-charm').checked=false;$('#has-slab').checked=false;$('#charm-picker').hidden=true;$('#slab-picker').hidden=true;
   $('#selected-main').hidden=true;$('#selected-charm').hidden=true;$('#selected-slab').hidden=true;$('#manual-item-toggle').checked=false;$('#manual-fields').hidden=true;$('#manual-name').value='';$('#manual-image').value='';
   $('#main-sale').value='';$('#charm-sale').value='';$('#slab-sale').value='';$('#buy-price').value='';$('#trade-notes').value='';$('#extra-attachment-form').hidden=true;$('#extra-selected-list').innerHTML='';$('#actual-prices').innerHTML='';$('#actual-prices').hidden=true;$('#mark-sold').checked=false;$('#realized-section').hidden=false;
@@ -462,7 +509,7 @@ async function openTradeDialog(recordId=null){
     state.editor.main=record.main||{name:record.name,market_hash_name:record.name,category:record.category,image:record.image};
     state.editor.charm=record.charm||null;state.editor.slab=record.slab||null;state.editor.extras=structuredClone(record.extras||[]);
     $('#dialog-id').textContent=record.id;$('#dialog-title').textContent='İşlemi düzenle';$('#save-trade').innerHTML='Değişiklikleri kaydet <span>→</span>';
-    $('#buy-price').value=(record.buyCents/100).toFixed(2);$('#main-sale').value=(record.mainSale/100).toFixed(2);$('#bought-at').value=localInputValue(new Date(record.boughtAt));$('#lock-days').value=record.lockDays;
+    $('#buy-price').value=(record.buyCents/100).toFixed(2);$('#main-sale').value=(record.mainSale/100).toFixed(2);$('#bought-at').value=localInputValue(new Date(record.boughtAt));setLockInputs($('#lock-days'),$('#lock-hours'),recordLockHours(record));
     $('#trade-notes').value=record.notes||'';$('#has-charm').checked=!!record.charm;$('#has-slab').checked=!!record.slab;$('#charm-picker').hidden=!record.charm;$('#slab-picker').hidden=!record.slab;
     if(record.charm){$('#charm-sale').value=(record.charmSale/100).toFixed(2);selectAttachment('charm',record.charm)}
     if(record.slab){$('#slab-sale').value=(record.slabSale/100).toFixed(2);selectAttachment('slab',record.slab)}
@@ -486,7 +533,7 @@ function editorRecord(){
   const main=state.editor.main;
   const extras=state.editor.extras.map(item=>({...item,sale:cents($(`[data-extra-price="${CSS.escape(item.lineId)}"]`)?.value)}));
   const actualPrices={};$$('[data-actual-price]').forEach(input=>actualPrices[input.dataset.actualPrice]=cents(input.value));
-  return {main,charm:state.editor.charm,slab:state.editor.slab,extras,category:main?.category||state.editor.category,name:itemName(main),image:itemImage(main),mainSale:cents($('#main-sale').value),charmSale:cents($('#charm-sale').value),slabSale:cents($('#slab-sale').value),buyCents:cents($('#buy-price').value),boughtAt:new Date($('#bought-at').value).toISOString(),lockDays:clampLockDays($('#lock-days').value),notes:$('#trade-notes').value.trim(),actualPrices,soldAt:$('#mark-sold').checked?(state.trades.find(t=>t.id===state.editor.recordId)?.soldAt||new Date().toISOString()):null,updatedAt:new Date().toISOString()};
+  return {main,charm:state.editor.charm,slab:state.editor.slab,extras,category:main?.category||state.editor.category,name:itemName(main),image:itemImage(main),mainSale:cents($('#main-sale').value),charmSale:cents($('#charm-sale').value),slabSale:cents($('#slab-sale').value),buyCents:cents($('#buy-price').value),boughtAt:new Date($('#bought-at').value).toISOString(),lockHours:clampLockHours(Number($('#lock-days').value)*24+Number($('#lock-hours').value)),notes:$('#trade-notes').value.trim(),actualPrices,soldAt:$('#mark-sold').checked?(state.trades.find(t=>t.id===state.editor.recordId)?.soldAt||new Date().toISOString()):null,updatedAt:new Date().toISOString()};
 }
 function addRecordEvent(record,type,description,at=new Date().toISOString()){
   record.events=[...(record.events||[]),{type,description,at}];
@@ -541,10 +588,10 @@ async function markSold(id){
 
 function exportCsv(){
   const rows=historyRows();if(!rows.length){toast('Dışa aktarılacak kayıt bulunmuyor.','error');return}
-  const headers=['İşlem No','Durum','Item','Kategori','Ek itemler','Alış zamanı','Trade açılış zamanı','Kilit (gün)','Alış maliyeti USD','Tahmini brüt satış USD','Tahmini komisyon USD','Tahmini net satış USD','Tahmini net kâr USD','Gerçek satış zamanı','Gerçek net satış USD','Gerçekleşen net kâr USD','Kayıt günlüğü','Not'].map(value=>window.CSELL_I18N?.translate?.(value)||value);
+  const headers=['İşlem No','Durum','Item','Kategori','Ek itemler','Alış zamanı','Trade açılış zamanı','Kilit (saat)','Alış maliyeti USD','Tahmini brüt satış USD','Tahmini komisyon USD','Tahmini net satış USD','Tahmini net kâr USD','Gerçek satış zamanı','Gerçek net satış USD','Gerçekleşen net kâr USD','Kayıt günlüğü','Not'].map(value=>window.CSELL_I18N?.translate?.(value)||value);
   const quote=(v)=>`"${String(v??'').replaceAll('"','""')}"`;
   const translate=value=>window.CSELL_I18N?.translate?.(value)||value;
-  const data=rows.map(r=>{const expected=totalsFor(r),actual=totalsFor(r,true),extras=[r.charm,r.slab,...(r.extras||[]).map(x=>x.item||x)].filter(Boolean).map(itemName).join(' · '),log=(r.events||[]).map(event=>`${localDateTime(event.at)} ${translate(event.description)}`).join(' | ');return [r.id,translate(r.soldAt?'Satıldı':isReady(r)?'Satışa hazır':'Trade kilitli'),itemName(recordMainItem(r)),categoryName(recordMainItem(r).category||r.category),extras,localDateTime(r.boughtAt),localDateTime(unlockAt(r)),r.lockDays,(r.buyCents/100).toFixed(2),(expected.gross/100).toFixed(2),(expected.fees/100).toFixed(2),(expected.net/100).toFixed(2),(expected.profit/100).toFixed(2),r.soldAt?localDateTime(r.soldAt):'',r.soldAt?(actual.net/100).toFixed(2):'',r.soldAt?(actual.profit/100).toFixed(2):'',log,r.notes||'']});
+  const data=rows.map(r=>{const expected=totalsFor(r),actual=totalsFor(r,true),extras=[r.charm,r.slab,...(r.extras||[]).map(x=>x.item||x)].filter(Boolean).map(itemName).join(' · '),log=(r.events||[]).map(event=>`${localDateTime(event.at)} ${translate(event.description)}`).join(' | ');return [r.id,translate(r.soldAt?'Satıldı':isReady(r)?'Satışa hazır':'Trade kilitli'),itemName(recordMainItem(r)),categoryName(recordMainItem(r).category||r.category),extras,localDateTime(r.boughtAt),localDateTime(unlockAt(r)),recordLockHours(r),(r.buyCents/100).toFixed(2),(expected.gross/100).toFixed(2),(expected.fees/100).toFixed(2),(expected.net/100).toFixed(2),(expected.profit/100).toFixed(2),r.soldAt?localDateTime(r.soldAt):'',r.soldAt?(actual.net/100).toFixed(2):'',r.soldAt?(actual.profit/100).toFixed(2):'',log,r.notes||'']});
   const prefix=window.CSELL_LANGUAGE==='en'?'csell-trade-history':'csell-islem-gecmisi';
   const csv='\uFEFF'+[headers,...data].map(row=>row.map(quote).join(',')).join('\r\n');downloadBlob(csv,`${prefix}-${new Date().toISOString().slice(0,10)}.csv`,'text/csv;charset=utf-8');toast(`${rows.length} kayıt CSV olarak indirildi.`);
 }
@@ -554,8 +601,8 @@ function downloadBlob(content,name,type){const blob=new Blob([content],{type}),u
 async function restoreJson(file){
   try{const payload=JSON.parse(await file.text());if(payload.app!=='CSELL'||!Array.isArray(payload.trades))throw new Error('Bu dosya CSELL yedeği değil.');
     if(!confirm(`${payload.trades.length} kayıt yüklenecek. Mevcut kayıtlar aynı işlem numaraları için güncellenecek. Devam edilsin mi?`))return;
-    let restored=0;for(const record of payload.trades){if(!record.id||!record.boughtAt||!record.main)continue;const normalized={...record,lockDays:clampLockDays(record.lockDays)};await dbRequest('trades','put',normalized);restored++}
-    if(payload.settings)state.settings={...state.settings,...payload.settings};state.settings.lockDays=clampLockDays(state.settings.lockDays);
+    let restored=0;for(const record of payload.trades){if(!record.id||!record.boughtAt||!record.main)continue;const normalized={...record,lockHours:recordLockHours(record)};delete normalized.lockDays;await dbRequest('trades','put',normalized);restored++}
+    if(payload.settings)state.settings={...state.settings,...payload.settings,lockHours:clampLockHours(payload.settings.lockHours??(payload.settings.lockDays!==undefined?Number(payload.settings.lockDays)*24:state.settings.lockHours))};delete state.settings.lockDays;
     const highestId=Math.max(0,...state.trades.map(record=>Number(String(record.id||'').replace(/\D/g,''))||0),...payload.trades.map(record=>Number(String(record.id||'').replace(/\D/g,''))||0));state.settings.nextId=Math.max(Number(state.settings.nextId)||1,highestId+1);
     await dbRequest('settings','put',{key:'app',value:state.settings});await refreshTrades();toast(`${restored} kayıt yedekten yüklendi.`)
   }catch(error){toast(error.message||'Yedek dosyası okunamadı.','error')}
@@ -565,7 +612,7 @@ async function refreshTrades(){state.trades=await dbRequest('trades','getAll');r
 function attachEvents(){
   document.addEventListener('click',async event=>{
     if(!event.target.closest('.item-picker-wrap'))$('#item-results').hidden=true;
-    const page=event.target.closest('[data-page]');if(page){navigate(page.dataset.page);return}
+    const page=event.target.closest('[data-page]');if(page){if(page.dataset.historyStatus){state.filters.status=page.dataset.historyStatus;$('#filter-status').value=state.filters.status}navigate(page.dataset.page);return}
     const add=event.target.closest('[data-action="add"]');if(add){openTradeDialog();return}
     const action=event.target.closest('[data-action]');if(action?.dataset.id){if(action.dataset.action==='detail')openDetail(action.dataset.id);if(action.dataset.action==='edit')openTradeDialog(action.dataset.id);if(action.dataset.action==='delete')deleteTrade(action.dataset.id);return}
     const category=event.target.closest('[data-category]');if(category){setMainCategory(category.dataset.category);return}
@@ -578,9 +625,9 @@ function attachEvents(){
   });
   $('#quick-add').addEventListener('click',()=>openTradeDialog());
   $('#trade-form').addEventListener('submit',saveEditor);
-  const refreshMainResults=async()=>{const input=$('#item-search');if(document.activeElement!==input)return;$('#item-results').hidden=false;if(!state.catalog.has(state.editor.category))await ensureCatalog(state.editor.category);renderMainResults()};
-  $('#item-search').addEventListener('focus',refreshMainResults);
-  $('#item-search').addEventListener('input',refreshMainResults);
+  const refreshSearch=()=>{if(document.activeElement===$('#item-search'))refreshMainResults()};
+  $('#item-search').addEventListener('focus',refreshSearch);
+  $('#item-search').addEventListener('input',refreshSearch);
   $('#item-search').addEventListener('keydown',event=>{if(event.key==='Escape'){$('#item-results').hidden=true;event.preventDefault()}});
   $('#manual-item-toggle').addEventListener('change',event=>{$('#manual-fields').hidden=!event.target.checked;if(event.target.checked){state.editor.main=null;$('#selected-main').hidden=true;$('#item-results').innerHTML='';$('#item-results').hidden=true;$('#item-search').value=''}else if(String(state.editor.main?.id||'').startsWith('manual-')){state.editor.main=null;$('#selected-main').hidden=true;updateSalePreview()} });
   $('#manual-name').addEventListener('input',()=>{
@@ -597,7 +644,11 @@ function attachEvents(){
   $('#extra-search').addEventListener('input',async()=>{const category=$('#extra-category').value;if(!state.catalog.has(category))await ensureCatalog(category);renderResults($('#extra-results'),matchingItems(category,$('#extra-search').value),category,'extra')});
   $('#close-extra').addEventListener('click',()=>$('#extra-attachment-form').hidden=true);
   for(const selector of ['#buy-price','#main-sale','#charm-sale','#slab-sale'])$(selector).addEventListener('input',()=>{updateSalePreview();if($('#mark-sold').checked)renderActualPrices()});
-  $('#bought-at').addEventListener('input',updateUnlockPreview);$('#lock-days').addEventListener('input',event=>{const days=clampLockDays(event.target.value);event.target.value=days;updateUnlockPreview()});$('#setting-lock-days').addEventListener('input',event=>{event.target.value=clampLockDays(event.target.value)});
+  $('#bought-at').addEventListener('input',updateUnlockPreview);
+  const updateLockFields=(daysId,hoursId)=>{const days=$(`#${daysId}`),hours=$(`#${hoursId}`),total=clampLockHours((Number(days.value)||0)*24+(Number(hours.value)||0));setLockInputs(days,hours,total);updateUnlockPreview()};
+  for(const id of ['lock-days','lock-hours'])$(`#${id}`).addEventListener('input',()=>updateLockFields('lock-days','lock-hours'));
+  for(const id of ['setting-lock-days','setting-lock-hours'])$(`#${id}`).addEventListener('input',()=>updateLockFields('setting-lock-days','setting-lock-hours'));
+  $$('.queue-tab').forEach(button=>button.addEventListener('click',()=>{state.queueTab=button.dataset.queueTab;renderTradeQueue()}));
   $('#mark-sold').addEventListener('change',event=>{$('#actual-prices').hidden=!event.target.checked;renderActualPrices(state.trades.find(t=>t.id===state.editor.recordId));updateProfitEstimate()});
   $('#detail-edit').addEventListener('click',()=>{const id=state.detailId;$('#detail-dialog').close();openTradeDialog(id)});
   $('#detail-sold').addEventListener('click',()=>markSold(state.detailId));
@@ -621,31 +672,31 @@ function attachEvents(){
     location.reload();
   });
   $('#save-settings').addEventListener('click',async()=>{
-    const feeRate=Math.min(100,Math.max(0,Number($('#setting-fee-rate').value)||0));const feeFixed=Math.max(0,cents($('#setting-fee-fixed').value));const lockDays=clampLockDays($('#setting-lock-days').value);
-    state.settings={...state.settings,feeRate,feeFixed,lockDays};await dbRequest('settings','put',{key:'app',value:state.settings});renderDashboard();toast('Hesaplama ayarları kaydedildi.')
+    const feeRate=Math.min(100,Math.max(0,Number($('#setting-fee-rate').value)||0));const feeFixed=Math.max(0,cents($('#setting-fee-fixed').value));const lockHours=clampLockHours(Number($('#setting-lock-days').value)*24+Number($('#setting-lock-hours').value));
+    state.settings={...state.settings,feeRate,feeFixed,lockHours};delete state.settings.lockDays;await dbRequest('settings','put',{key:'app',value:state.settings});renderSettings();renderDashboard();toast('Hesaplama ayarları kaydedildi.')
   });
   $('#delete-all').addEventListener('click',async()=>{if(!confirm('Bu tarayıcıda saklanan tüm işlem kayıtları silinsin mi? Bu işlem geri alınamaz.'))return;await dbRequest('trades','clear');state.trades=[];state.settings.nextId=1;await dbRequest('settings','put',{key:'app',value:state.settings});await refreshTrades();toast('Tüm işlem kayıtları silindi.')});
   $('#mobile-menu').addEventListener('click',()=>{$('#sidebar').classList.add('mobile-open');$('#mobile-scrim').classList.add('open')});$('#mobile-scrim').addEventListener('click',()=>{$('#sidebar').classList.remove('mobile-open');$('#mobile-scrim').classList.remove('open')});
   for(const dialog of [$('#trade-dialog'),$('#detail-dialog')])dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
-  setInterval(()=>{$$('[data-countdown]').forEach(node=>{if(node.firstChild)node.firstChild.nodeValue=countdown(node.dataset.countdown);if(countdown(node.dataset.countdown)==='Açıldı')renderDashboard()})},1000);
+  setInterval(()=>{let unlocked=false;$$('[data-countdown]').forEach(node=>{if(node.firstChild)node.firstChild.nodeValue=countdown(node.dataset.countdown);if(new Date(node.dataset.countdown).getTime()<=Date.now())unlocked=true});if(unlocked)renderDashboard()},1000);
   setInterval(()=>{if(state.activePage==='dashboard')renderProfitChart()},60000);
 }
 
 async function init(){
   try{
     state.db=await openDb();
-    const saved=await dbRequest('settings','get','app');if(saved?.value)state.settings={...state.settings,...saved.value};state.settings.lockDays=clampLockDays(state.settings.lockDays);
+    const saved=await dbRequest('settings','get','app');if(saved?.value)state.settings={...state.settings,...saved.value,lockHours:clampLockHours(saved.value.lockHours??(saved.value.lockDays!==undefined?Number(saved.value.lockDays)*24:state.settings.lockHours))};delete state.settings.lockDays;
     if(state.settings.language==='tr'||state.settings.language==='en'){
       window.CSELL_LANGUAGE=state.settings.language;
       try{localStorage.setItem('csell-language',window.CSELL_LANGUAGE)}catch{}
     }
     state.trades=await dbRequest('trades','getAll');
-    for(const record of state.trades){const lockDays=clampLockDays(record.lockDays);if(lockDays!==record.lockDays){record.lockDays=lockDays;await dbRequest('trades','put',record)}}
+    for(const record of state.trades){const lockHours=recordLockHours(record);if(record.lockHours!==lockHours||Object.hasOwn(record,'lockDays')){record.lockHours=lockHours;delete record.lockDays;await dbRequest('trades','put',record)}}
     await dbRequest('settings','put',{key:'app',value:state.settings});
   }catch(error){
     console.error('CSELL local storage:',error);toast('Yerel veritabanı açılamadı. Tarayıcı depolama iznini kontrol et.','error');
   }
-  attachEvents();renderDashboard();renderSettings();window.CSELL_I18N?.apply();
+  $('#app-version').textContent=APP_VERSION;attachEvents();renderDashboard();renderSettings();window.CSELL_I18N?.apply();
   $('#chart-range').value='30';
   try{const returnPage=sessionStorage.getItem('csell-return-page');if(returnPage){sessionStorage.removeItem('csell-return-page');navigate(returnPage)}}catch{}
   if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
